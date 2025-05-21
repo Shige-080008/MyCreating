@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8">
+		<title>冠咲システム</title>
+		<link rel="stylesheet" href="css/野手テーブルCSS.css">
+		
+		
+	</head>
+	<body>
+		<h2></h2>
+		<form name="form1" action="">
+			<div class="AtoGandNum">
+			<table>
+				<tr>
+					<th>学年</th>
+					<th>選手名</th>
+					<th>送球</th>
+					<th>弾道</th>
+					<th>ミート</th>
+					<th>パワー</th>
+					<th>走力</th>
+					<th>肩力</th>
+					<th>守備力</th>
+					<th>捕球</th>
+				</tr>	
+				<tr>
+					<td>
+						<div class="player_inf">
+							<p class="grade">1年</p>
+							<p class="enr_yr">(1926年入学)</p>
+						</div>
+					</td>
+					<td>田中</td>
+					<td>
+						<div class="status_oneset">
+							<div class="status_number">
+								<input type="button" value="↑" onClick="status2(this.form.throw_lev, 1)">
+								<input class="AtoG" type="text" value="ー" name="throw_lev">
+								<input type="button" value="↓" onClick="status2(this.form.throw_lev, -1)">
+							</div>
+						</div>
+					</td>
+					<td>弾道パラメータ</td>
+					<td>
+						<div class="status_oneset">
+							<p id="meet_lev">ー</p>
+							<div class="status_number">
+								<input type="button" value="↑" onClick="status1(this.form.meet_lev, 1)">
+								<input type="number" value="0" name="meet_lev" oninput="status1(this.form.meet_lev, 0)">
+								<input type="button" value="↓" onClick="status1(this.form.meet_lev, -1)">
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="status_oneset">
+							<p id="power_lev">ー</p>
+							<div class="status_number">
+								<input type="button" value="↑" onClick="status1(this.form.power_lev, 1)">
+								<input type="number" value="0" name="power_lev" oninput="status1(this.form.power_lev, 0)">
+								<input type="button" value="↓" onClick="status1(this.form.power_lev, -1)">
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="status_oneset">
+							<p id="running_lev">ー</p>
+							<div class="status_number">
+								<input type="button" value="↑" onClick="status1(this.form.running_lev, 1)">
+								<input type="number" value="0" name="running_lev" oninput="status1(this.form.running_lev, 0)">
+								<input type="button" value="↓" onClick="status1(this.form.running_lev, -1)">
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="status_oneset">
+							<p id="arm_lev">ー</p>
+							<div class="status_number">
+								<input type="button" value="↑" onClick="status1(this.form.arm_lev, 1)">
+								<input type="number" value="0" name="arm_lev" oninput="status1(this.form.arm_lev, 0)">
+								<input type="button" value="↓" onClick="status1(this.form.arm_lev, -1)">
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="status_oneset">
+							<p id="difence_lev">ー</p>
+							<div class="status_number">
+								<input type="button" value="↑" onClick="status1(this.form.difence_lev, 1)">
+								<input type="number" value="0" name="difence_lev" oninput="status1(this.form.difence_lev, 0)">
+								<input type="button" value="↓" onClick="status1(this.form.difence_lev, -1)">
+							</div>
+						</div>
+					</td>
+					<td>
+						<div class="status_oneset">
+							<p id="catch_lev">ー</p>
+							<div class="status_number">
+								<input type="button" value="↑" onClick="status1(this.form.catch_lev, 1)">
+								<input type="number" value="0" name="catch_lev"  oninput="status1(this.form.catch_lev, 0)">
+								<input type="button" value="↓" onClick="status1(this.form.catch_lev, -1)">
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+			</div>
+		</form>
+		<script src="js/野手テーブルの処理.js"></script>
+	</body>
+</html>
