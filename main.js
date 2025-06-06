@@ -123,9 +123,8 @@ async function updatePlayer(id, playerData) {
     try {
         const playerRef = doc(db, "players", id);
         await updateDoc(playerRef, playerData);
-        console.log("選手を更新しました ID: ", id);
+        alert("選手を更新しました ID: "+ id);
     } catch (e) {
-        console.error("選手更新エラー: ", e);
         alert('選手の更新に失敗しました。詳細: ' + e.message);
     }
 }
@@ -162,7 +161,6 @@ async function loadPlayers() {
         let playerIndex = 1; 
         playersData.forEach((player) => { 
             const playerEntry = document.createElement('p');
-            // ★★★ ここも「player.name」を使う！ ★★★
             playerEntry.textContent = 
                 `${playerIndex}. 入学年:${player.enrollmentYear} 選手名:${player.name} ` + 
                 `送球:${player.throwing} 弾道:${player.trajectory} ミート:${player.meet} ` +
@@ -189,7 +187,7 @@ async function loadPlayers() {
                 registerButton.textContent = '選手を更新する';
             });
 
-            // 削除ボタン (変更なし)
+            // 削除ボタン
             const deleteButton = document.createElement('button');
             deleteButton.textContent = '削除';
             deleteButton.style.marginLeft = '10px';
