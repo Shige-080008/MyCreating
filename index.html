@@ -1,111 +1,57 @@
 <!DOCTYPE html>
 <html lang="ja">
-	<head>
-		<meta charset="UTF-8">
-		<title>冠咲システム</title>
-		<link rel="stylesheet" href="css/野手テーブルCSS.css">
-		
-		
-	</head>
-	<body>
-		<h2></h2>
-		<form name="form1" action="">
-			<div class="AtoGandNum">
-			<table>
-				<tr>
-					<th>学年</th>
-					<th>選手名</th>
-					<th>送球</th>
-					<th>弾道</th>
-					<th>ミート</th>
-					<th>パワー</th>
-					<th>走力</th>
-					<th>肩力</th>
-					<th>守備力</th>
-					<th>捕球</th>
-				</tr>	
-				<tr>
-					<td>
-						<div class="player_inf">
-							<p class="grade">1年</p>
-							<p class="enr_yr">(1926年入学)</p>
-						</div>
-					</td>
-					<td>田中</td>
-					<td>
-						<div class="status_oneset">
-							<div class="status_number">
-								<input type="button" value="↑" onClick="status2(this.form.throw_lev, 1)">
-								<input class="AtoG" type="text" value="ー" name="throw_lev">
-								<input type="button" value="↓" onClick="status2(this.form.throw_lev, -1)">
-							</div>
-						</div>
-					</td>
-					<td>弾道パラメータ</td>
-					<td>
-						<div class="status_oneset">
-							<p id="meet_lev">ー</p>
-							<div class="status_number">
-								<input type="button" value="↑" onClick="status1(this.form.meet_lev, 1)">
-								<input type="number" value="0" name="meet_lev" oninput="status1(this.form.meet_lev, 0)">
-								<input type="button" value="↓" onClick="status1(this.form.meet_lev, -1)">
-							</div>
-						</div>
-					</td>
-					<td>
-						<div class="status_oneset">
-							<p id="power_lev">ー</p>
-							<div class="status_number">
-								<input type="button" value="↑" onClick="status1(this.form.power_lev, 1)">
-								<input type="number" value="0" name="power_lev" oninput="status1(this.form.power_lev, 0)">
-								<input type="button" value="↓" onClick="status1(this.form.power_lev, -1)">
-							</div>
-						</div>
-					</td>
-					<td>
-						<div class="status_oneset">
-							<p id="running_lev">ー</p>
-							<div class="status_number">
-								<input type="button" value="↑" onClick="status1(this.form.running_lev, 1)">
-								<input type="number" value="0" name="running_lev" oninput="status1(this.form.running_lev, 0)">
-								<input type="button" value="↓" onClick="status1(this.form.running_lev, -1)">
-							</div>
-						</div>
-					</td>
-					<td>
-						<div class="status_oneset">
-							<p id="arm_lev">ー</p>
-							<div class="status_number">
-								<input type="button" value="↑" onClick="status1(this.form.arm_lev, 1)">
-								<input type="number" value="0" name="arm_lev" oninput="status1(this.form.arm_lev, 0)">
-								<input type="button" value="↓" onClick="status1(this.form.arm_lev, -1)">
-							</div>
-						</div>
-					</td>
-					<td>
-						<div class="status_oneset">
-							<p id="difence_lev">ー</p>
-							<div class="status_number">
-								<input type="button" value="↑" onClick="status1(this.form.difence_lev, 1)">
-								<input type="number" value="0" name="difence_lev" oninput="status1(this.form.difence_lev, 0)">
-								<input type="button" value="↓" onClick="status1(this.form.difence_lev, -1)">
-							</div>
-						</div>
-					</td>
-					<td>
-						<div class="status_oneset">
-							<p id="catch_lev">ー</p>
-							<div class="status_number">
-								<input type="button" value="↑" onClick="status1(this.form.catch_lev, 1)">
-								<input type="number" value="0" name="catch_lev"  oninput="status1(this.form.catch_lev, 0)">
-								<input type="button" value="↓" onClick="status1(this.form.catch_lev, -1)">
-							</div>
-						</div>
-					</td>
-				</tr>
-			</table>
-			</div>
-		</form>
-		<script src="js/野手テーブルの処理.js"></script>
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選手データ管理</title>
+</head>
+<body>
+    <h1>栄冠ナイン 選手データ管理</h1>
+    <form id="playerForm">
+        <p>
+            入学年: <input type="number" id="enrollmentYearInput" required min="1932" max="2500"><br>
+            選手名: <input type="text" id="playerNameInput" required minlength="1" maxlength="10"><br>
+            送球: <input type="number" id="throwingInput" min="0" max="7" required><br>
+            弾道: <input type="number" id="trajectoryInput" min="1" max="4" required><br>
+            ミート: <input type="number" id="meetInput" min="1" max="100" required><br>
+            パワー: <input type="number" id="powerInput" min="1" max="100" required><br>
+            走力: <input type="number" id="speedInput" min="1" max="100" required><br>
+            肩力: <input type="number" id="armStrengthInput" min="1" max="100" required><br>
+            守備力: <input type="number" id="defenseInput" min="1" max="100" required><br>
+            捕球: <input type="number" id="catchingInput" min="1" max="100" required><br>
+        </p>
+        <button type="submit" id="registerButton">選手を登録する</button>
+    </form>
+    <div id="playerList">
+    </div>
+
+    <script type="module">
+        // FirebaseのSDK（道具箱）を読み込む
+        // Firebaseアプリの基本機能
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        // Firestoreデータベースの機能はメインJSで読み込むのでここでは不要だが、getFirestoreだけはここで必要
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+        // Firebaseプロジェクトの設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyAu3yhKb2VPjfSGLjHbDc6k7NkWV8pdU3c",
+            authDomain: "kanzakiapp.firebaseapp.com",
+            projectId: "kanzakiapp",
+            storageBucket: "kanzakiapp.firebasestorage.app",
+            messagingSenderId: "449151069520",
+            appId: "1:449151069520:web:8829b6b5b70db2b1ed1055"
+        };
+        
+        // Firebaseアプリを初期化する
+        const app = initializeApp(firebaseConfig);
+        
+        // Firestoreのデータベースを使えるようにする
+        const db = getFirestore(app);
+
+        // main.jsからinitApp関数を読み込む
+        import { initApp } from './main.js'; 
+        // main.jsにデータベース（db）の情報を渡して、初期設定を始める
+        initApp(db);
+    </script>
+</body>
 </html>
