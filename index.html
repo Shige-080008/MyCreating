@@ -8,22 +8,20 @@
 <body>
     <h1>栄冠ナイン 選手データ管理</h1>
 
-    <div id="authStatus"></div>
-    <button id="authButton">Googleでログイン</button>
-    ---
+    <button id="authButton">Googleでログイン</button><div id="authStatus"></div>
 
     <form id="playerForm">
         <p>
-            入学年: <input type="number" id="enrollmentYearInput" required min="1932" max="2500"><br>
-            選手名: <input type="text" id="playerNameInput" required minlength="1" maxlength="10"><br>
-            送球: <input type="number" id="throwingInput" min="0" max="7" required><br>
-            弾道: <input type="number" id="trajectoryInput" min="1" max="4" required><br>
-            ミート: <input type="number" id="meetInput" min="1" max="100" required><br>
-            パワー: <input type="number" id="powerInput" min="1" max="100" required><br>
-            走力: <input type="number" id="speedInput" min="1" max="100" required><br>
-            肩力: <input type="number" id="armStrengthInput" min="1" max="100" required><br>
-            守備力: <input type="number" id="defenseInput" min="1" max="100" required><br>
-            捕球: <input type="number" id="catchingInput" min="1" max="100" required><br>
+            入学年: <input type="number" id="enrollmentYear" required min="1932" max="2500"><br>
+            選手名: <input type="text" id="name" required minlength="1" maxlength="10"><br>
+            送球: <input type="number" id="throwing" min="0" max="7" required><br>
+            弾道: <input type="number" id="dandou" min="1" max="4" required><br>
+            ミート: <input type="number" id="meet" min="1" max="100" required><br>
+            パワー: <input type="number" id="power" min="1" max="100" required><br>
+            走力: <input type="number" id="speed" min="1" max="100" required><br>
+            肩力: <input type="number" id="armStrength" min="1" max="100" required><br>
+            守備力: <input type="number" id="defense" min="1" max="100" required><br>
+            捕球: <input type="number" id="catching" min="1" max="100" required><br>
         </p>
         <button type="submit" id="registerButton" disabled>選手を登録する</button>
     </form>
@@ -31,11 +29,18 @@
     </div>
 
     <script type="module">
+        // Firebaseのコア機能を読み込み
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        // FirestoreとAuthenticationの機能を読み込み
         import { getFirestore } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
-        // Firebase Authentication SDKをインポート
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
+        // 各モジュールの初期化関数を読み込み
+        import { initAuth } from './auth.js';
+        import { initFirestore } from './firestore.js';
+        import { initUI } from './ui.js';
+
+        // Firebaseの設定情報
         const firebaseConfig = {
             apiKey: "AIzaSyAu3yhKb2VPjfSGLjHbDc6k7NkWV8pdU3c",
             authDomain: "kanzakiapp.firebaseapp.com",
@@ -45,17 +50,20 @@
             appId: "1:449151069520:web:8829b6b5b70db2b1ed1055"
         };
         
+        // Firebaseアプリの初期化
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        // Authenticationを使えるようにする
         const auth = getAuth(app);
-        // Google認証プロバイダを準備する
         const googleProvider = new GoogleAuthProvider();
 
-        // main.jsからinitApp関数を読み込む
-        // initAppにauthオブジェクトも渡す
-        import { initApp } from './main.js'; 
-        initApp(db, auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged);
+        // UI関連の初期化
+        initUI();
+
+        // Firestore関連の初期化
+        initFirestore(db);
+
+        // 認証関連の初期化
+        initAuth(auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged);
     </script>
 </body>
 </html>
