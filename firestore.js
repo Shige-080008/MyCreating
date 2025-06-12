@@ -6,8 +6,8 @@ import { updatePlayerListUI, getUIElements } from './ui.js';
 import { currentLoggedInUser } from './auth.js'; 
 
 let db;
-let unsubscribeFromPlayers = null; // Firestoreのリアルタイムリスナーを解除するための変数
-let playerListDiv; // UI要素を保持する変数
+let unsubscribeFromPlayers = null; 
+let playerListTableBody; // <table>の<tbody>要素を保持する変数に変更
 
 /**
  * Firestore機能を初期化する関数
@@ -16,7 +16,7 @@ let playerListDiv; // UI要素を保持する変数
 export function initFirestore(firestoreDb) {
     db = firestoreDb;
     const elements = getUIElements();
-    playerListDiv = elements.playerListDiv;
+    playerListTableBody = elements.playerListTableBody;
 
     // アプリケーション起動時にリアルタイム監視を開始
     startListeningToPlayers();
@@ -84,16 +84,15 @@ export async function deletePlayer(id) {
 
 /**
  * Firestoreの選手データをリアルタイムで監視し、UIを更新する関数
- * （exportすることで、他のファイルからも監視の開始を制御可能にする）
  */
 export function startListeningToPlayers() {
     if (!db) {
         console.error("Firestore database (db) is not initialized.");
-        playerListDiv.textContent = '初期化中...';
+        if (playerListTableBody) {
+             playerListTableBody.innerHTML = '<tr><td colspan="11">初期化中...</td></tr>';
+        }
         return;
     }
-
-    playerListDiv.innerHTML = '読み込み中...'; 
 
     // 以前のリスナーがあれば解除
     if (unsubscribeFromPlayers) {
@@ -115,6 +114,19 @@ export function startListeningToPlayers() {
         updatePlayerListUI(playersData); 
     }, (error) => {
         console.error("データの読み込みエラー (onSnapshot):", error);
-        playerListDiv.textContent = `データの読み込みに失敗しました。詳細: ${error.message}`; 
+        // エラー時でも登録行は表示されるようにするため、<tbody>の内容を直接操作しない
+        if (playerListTableBody) {
+            // エラーメッセージを表示するが、既存の登録行は残す
+            const errorRow = playerListTableBody.querySelector('.error-message-row');
+            if (errorRow) {
+                errorRow.remove(); // 既存のエラーメッセージがあれば削除
+            }
+            const newErrorRow = playerListTableBody.insertRow(0); // テーブルの先頭に挿入
+            newErrorRow.classList.add('error-message-row');
+            const cell = newErrorRow.insertCell();
+            cell.colSpan = 11;
+            cell.textContent = `データの読み込みに失敗しました。詳細: ${error.message}`;
+            cell.style.color = 'red';
+        }
     });
 }
