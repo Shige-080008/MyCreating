@@ -3,29 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>選手データ管理</title>
+    <title>栄冠ナイン 選手データ管理</title>
+    <style>
+        /* CSSは前回からほぼ変更なし */
+        .player-table-container table {
+            border-collapse: collapse;
+            border: 1px solid #DDDDDD;
+            width: 100%; /* テーブルの幅を調整 */
+        }
+        .player-table-container th,
+        .player-table-container td {
+            font-weight: bold;
+            font-size: 16px; /* フォントサイズを少し小さく */
+            border: 1px solid #DDDDDD;
+            padding: 8px; /* パディングを追加 */
+            text-align: center; /* 中央揃え */
+        }
+        .player-table-container th {
+            font-size: 18px;
+            background-color: #f2f2f2; /* ヘッダーの背景色 */
+        }
+        .player-info-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 中央揃え */
+            justify-content: center;
+        }
+        .player-grade {
+            font-weight: bold;
+            font-size: 24px; /* 学年を大きく */
+            margin: 0px;
+        }
+        .player-enrollment-year {
+            text-align: center;
+            font-weight: bold;
+            font-size: 10px;
+            margin: 0px;
+        }
+        /* テーブル内のinputフィールドのスタイル */
+        .player-table-container input[type="number"],
+        .player-table-container input[type="text"] {
+            width: 60px; /* テーブル内の数値入力欄の幅を調整 */
+            text-align: center;
+            padding: 3px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        /* 登録行のスタイル */
+        #registration-row {
+            background-color: #e6ffe6; /* 登録行の背景色 */
+            display: none; /* 初期状態では非表示 */
+        }
+        #registration-row input {
+            background-color: #fff; /* 登録行の入力フィールドの背景色 */
+        }
+        .registration-actions button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .registration-actions .register-btn {
+            background-color: #4CAF50; /* 緑 */
+            color: white;
+            border: none;
+            margin-bottom: 5px;
+        }
+        .registration-actions .clear-btn {
+            background-color: #888; /* グレー */
+            color: white;
+            border: none;
+        }
+
+        /* 既存の操作ボタン */
+        .action-buttons button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .action-buttons .update-btn { /* 新しい更新ボタンのスタイル */
+            background-color: #008CBA; /* 青 */
+            color: white;
+            border: none;
+            margin-bottom: 5px; /* 削除ボタンとの間隔 */
+        }
+        .action-buttons .delete-btn {
+            background-color: #f44336; /* 赤 */
+            color: white;
+            border: none;
+        }
+        #auth-status {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        #auth-button {
+            padding: 8px 15px;
+            background-color: #4285F4; /* Google Blue */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
     <h1>栄冠ナイン 選手データ管理</h1>
 
-    <button id="authButton">Googleでログイン</button><div id="authStatus"></div>
+    <button id="auth-button">Googleでログイン</button>
+    <div id="auth-status"></div>
 
-    <form id="playerForm">
-        <p>
-            入学年: <input type="number" id="enrollmentYear" required min="1932" max="2500"><br>
-            選手名: <input type="text" id="name" required minlength="1" maxlength="10"><br>
-            送球: <input type="number" id="throwing" min="0" max="7" required><br>
-            弾道: <input type="number" id="dandou" min="1" max="4" required><br>
-            ミート: <input type="number" id="meet" min="1" max="100" required><br>
-            パワー: <input type="number" id="power" min="1" max="100" required><br>
-            走力: <input type="number" id="speed" min="1" max="100" required><br>
-            肩力: <input type="number" id="armStrength" min="1" max="100" required><br>
-            守備力: <input type="number" id="defense" min="1" max="100" required><br>
-            捕球: <input type="number" id="catching" min="1" max="100" required><br>
-        </p>
-        <button type="submit" id="registerButton" disabled>選手を登録する</button>
-    </form>
-    <div id="playerList">
+    <hr>
+
+    <h2>登録選手一覧</h2>
+    <div class="player-table-container">
+        <table id="player-list-table">
+            <thead>
+                <tr>
+                    <th>学年</th>
+                    <th>選手名</th>
+                    <th>送球</th>
+                    <th>弾道</th>
+                    <th>ミート</th>
+                    <th>パワー</th>
+                    <th>走力</th>
+                    <th>肩力</th>
+                    <th>守備力</th>
+                    <th>捕球</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="registration-row">
+                    <td>
+                        <div class="player-info-cell">
+                            <p class="player-grade">新規登録</p>
+                            <p class="player-enrollment-year">入学年:</p>
+                            <input type="number" id="reg-enrollment-year" required min="1932" max="2500">
+                        </div>
+                    </td>
+                    <td><input type="text" id="reg-player-name" required minlength="1" maxlength="10"></td>
+                    <td><input type="number" id="reg-player-throwing" min="0" max="7" required></td>
+                    <td><input type="number" id="reg-player-dandou" min="1" max="4" required></td>
+                    <td><input type="number" id="reg-player-meet" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-player-power" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-player-speed" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-player-armstrength" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-player-defense" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-player-catching" min="1" max="100" required></td>
+                    <td class="registration-actions">
+                        <button class="register-btn" id="reg-player-register-button">登録</button>
+                        <button class="clear-btn" id="reg-player-clear-button">クリア</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <script type="module">
@@ -40,7 +177,7 @@
         import { initFirestore } from './firestore.js';
         import { initUI } from './ui.js';
 
-        // Firebaseの設定情報
+        // Firebaseの設定情報 (ここではダミー値。実際にはあなたのプロジェクトのものを使用)
         const firebaseConfig = {
             apiKey: "AIzaSyAu3yhKb2VPjfSGLjHbDc6k7NkWV8pdU3c",
             authDomain: "kanzakiapp.firebaseapp.com",
