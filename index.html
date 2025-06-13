@@ -110,6 +110,41 @@
             font-size: 16px;
             margin-bottom: 15px;
         }
+
+        /* 新しいスタイル: アルファベットと数値を表示するコンテナ */
+        .stat-display-container {
+            display: flex;
+            flex-direction: column; /* 縦並び */
+            align-items: center; /* 中央揃え */
+        }
+        .stat-grade {
+            font-weight: bold;
+            font-size: 24px; /* アルファベットの文字サイズを大きく */
+            text-shadow: 1px 1px 0px gray; /* 影を追加 */
+            margin-bottom: 2px; /* 数値との間隔 */
+        }
+        .stat-value {
+            font-size: 14px; /* 数値の文字サイズ */
+            color: #555; /* 数値の色 */
+        }
+        /* 各アルファベットランクの色 */
+        .grade-G { color: #C0C0C0; } /* view.htmlのF,Gと同じ色 */
+        .grade-F { color: #3399ff; } /* view.htmlのFと同じ色 */
+        .grade-E { color: #aaff33; } /* view.htmlのEと同じ色 */
+        .grade-D { color: #ffdd55; } /* view.htmlのDと同じ色 */
+        .grade-C { color: #ff9900; } /* view.htmlのCと同じ色 */
+        .grade-B { color: red; } /* view.htmlのBと同じ色 */
+        .grade-A { color: magenta; } /* view.htmlのAと同じ色 */
+        .grade-S { color: hotpink; } /* view.htmlのSと同じ色 (pinkから変更) */
+        /* 送球のG,Fがcrimsonになっているので、それに合わせる */
+        .grade-throwing-G { color: crimson; }
+        .grade-throwing-F { color: crimson; }
+        .grade-throwing-E { color: #C0C0C0; }
+        .grade-throwing-D { color: #C0C0C0; }
+        .grade-throwing-C { color: #C0C0C0; }
+        .grade-throwing-B { color: #1499db; }
+        .grade-throwing-A { color: #1499db; }
+        .grade-throwing-S { color: #dbba14; }
     </style>
 </head>
 <body>
