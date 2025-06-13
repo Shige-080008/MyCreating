@@ -1,4 +1,4 @@
-// Firestoreの登録・更新・削除関数をインポート
+// Firebase Firestoreの登録・更新・削除関数をインポート
 import { addPlayer, updatePlayer, deletePlayer } from './firestore.js';
 // 認証のログイン状態をインポート（編集・削除ボタンの表示制御用）
 import { currentLoggedInUser } from './auth.js';
@@ -147,6 +147,56 @@ export function clearRegistrationForm() {
 }
 
 /**
+ * 数値ステータスをアルファベットランクに変換する関数
+ * @param {string} statType - ステータスの種類 ('throwing', 'meet', 'power', ...)
+ * @param {number} value - ステータスの数値
+ * @returns {string} アルファベットランク
+ */
+function convertStatToGrade(statType, value) {
+    if (statType === 'throwing') {
+        const grades = ['G', 'F', 'E', 'D', 'C', 'B', 'A', 'S'];
+        // 送球は0～7の数値がG～Sに対応
+        if (value >= 0 && value <= 7) {
+            return grades[value];
+        }
+    } else if (['meet', 'power', 'speed', 'armStrength', 'defense', 'catching'].includes(statType)) {
+        // view.htmlのrank関数に合わせて分類
+        if (value >= 90) return 'S';
+        if (value >= 80) return 'A';
+        if (value >= 70) return 'B';
+        if (value >= 60) return 'C';
+        if (value >= 50) return 'D';
+        if (value >= 40) return 'E';
+        if (value >= 20) return 'F';
+        if (value >= 1) return 'G';
+        if (value === 0) return 'G'; // 0の場合もGとする
+    } else if (statType === 'dandou') {
+        // 弾道は数値そのまま表示
+        return value.toString();
+    }
+    return ''; // 不明な場合は空文字列
+}
+
+/**
+ * アルファベットランクに基づいて要素に色を適用する関数
+ * @param {HTMLElement} element - 色を適用するDOM要素
+ * @param {string} statType - ステータスの種類 ('throwing', 'meet', ...)
+ * @param {string} grade - アルファベットランク (例: 'A', 'S', 'G')
+ */
+function applyGradeColor(element, statType, grade) {
+    // 既存のクラスを一度クリア
+    element.className = '';
+    // 特定のステータスに合わせたクラスを追加 (例: throwing-G)
+    // それ以外のステータスは汎用的なクラス (例: grade-G)
+    if (statType === 'throwing') {
+        element.classList.add(`grade-${statType}-${grade}`);
+    } else if (['meet', 'power', 'speed', 'armStrength', 'defense', 'catching'].includes(statType)) {
+        element.classList.add(`grade-${grade}`);
+    }
+    element.classList.add('stat-grade'); // 基本のスタイルも追加
+}
+
+/**
  * 選手リストのUI（表示）を更新する関数
  * @param {Array} playersData - 表示する選手データの配列
  */
@@ -173,7 +223,34 @@ export function updatePlayerListUI(playersData = []) {
         noPlayerRow.classList.add('no-player-message');
     }
 
-    playersData.forEach((player, index) => { 
+    // 全ての選手データから最も新しい入学年を取得
+    const allEnrollmentYears = playersData.map(player => player.enrollmentYear);
+    const latestEnrollmentYear = allEnrollmentYears.length > 0 ? Math.max(...allEnrollmentYears) : null;
+
+    // 各選手に学年を割り当てる
+    const playersWithGrade = playersData.map(player => {
+        let grade = null;
+        if (latestEnrollmentYear !== null) {
+            grade = (latestEnrollmentYear - player.enrollmentYear) + 1;
+        }
+        return { ...player, calculatedGrade: grade };
+    }).filter(player => player.calculatedGrade >= 1 && player.calculatedGrade <= 3); // 1年生から3年生までをフィルタリング
+
+    // 学年（降順）、入学年（降順）、選手名（昇順）でソート
+    playersWithGrade.sort((a, b) => {
+        // 学年でソート（3年生 > 2年生 > 1年生）
+        if (a.calculatedGrade !== b.calculatedGrade) {
+            return b.calculatedGrade - a.calculatedGrade;
+        }
+        // 同学年の場合、入学年でソート（新しい入学年が上位）
+        if (a.enrollmentYear !== b.enrollmentYear) {
+            return b.enrollmentYear - a.enrollmentYear;
+        }
+        // 同一入学年の場合、選手名でソート
+        return a.name.localeCompare(b.name);
+    });
+
+    playersWithGrade.forEach((player, index) => { 
         const row = playerListTableBodyEl.insertRow(index); // 取得したデータの順に挿入
         row.dataset.playerId = player.id; // 行に選手IDをデータ属性として保持
 
@@ -182,17 +259,18 @@ export function updatePlayerListUI(playersData = []) {
         playerInfoCell.classList.add('player-info-cell');
         const gradeP = document.createElement('p');
         gradeP.classList.add('player-grade');
-        gradeP.textContent = `${player.enrollmentYear}年入学`; 
+        gradeP.textContent = `${player.calculatedGrade}年生`;
+        
         const enrollmentYearP = document.createElement('p');
         enrollmentYearP.classList.add('player-enrollment-year');
-        enrollmentYearP.textContent = `(${player.enrollmentYear}年)`; 
+        enrollmentYearP.textContent = `(${player.enrollmentYear}年入学)`; 
         playerInfoCell.appendChild(gradeP);
         playerInfoCell.appendChild(enrollmentYearP);
         
         // 選手名 (テキスト表示)
         row.insertCell().textContent = player.name;
 
-        // 各ステータスをinputタグとして描画
+        // 各ステータスをアルファベットランクと数値、またはinputタグとして描画
         const stats = [
             { key: 'throwing', min: 0, max: 7 },
             { key: 'dandou', min: 1, max: 4 },
@@ -206,18 +284,40 @@ export function updatePlayerListUI(playersData = []) {
 
         stats.forEach(stat => {
             const cell = row.insertCell();
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.value = player[stat.key];
-            input.min = stat.min;
-            input.max = stat.max;
-            input.dataset.field = stat.key; // Firestoreのフィールド名をデータ属性として保持
-            input.dataset.playerId = player.id; // 選手IDをデータ属性として保持
+            if (currentLoggedInUser) {
+                // ログイン中は編集可能なinputタグを表示
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.value = player[stat.key];
+                input.min = stat.min;
+                input.max = stat.max;
+                input.dataset.field = stat.key; // Firestoreのフィールド名をデータ属性として保持
+                input.dataset.playerId = player.id; // 選手IDをデータ属性として保持
+                cell.appendChild(input);
+            } else {
+                // 未ログイン中はアルファベットランクと数値を両方表示
+                const container = document.createElement('div');
+                container.classList.add('stat-display-container');
 
-            // ログインしている場合のみ編集可能にする
-            input.disabled = !currentLoggedInUser;
+                const gradeSpan = document.createElement('span');
+                const gradeValue = convertStatToGrade(stat.key, player[stat.key]);
+                gradeSpan.textContent = gradeValue;
+                
+                // 弾道は数値そのままなので、色をつけない
+                if (stat.key !== 'dandou') {
+                    applyGradeColor(gradeSpan, stat.key, gradeValue);
+                } else {
+                    gradeSpan.classList.add('stat-grade'); // 弾道も見た目は大きく
+                }
 
-            cell.appendChild(input);
+                const valueSpan = document.createElement('span');
+                valueSpan.classList.add('stat-value');
+                valueSpan.textContent = `(${player[stat.key]})`; // 数値を括弧で囲んで表示
+
+                container.appendChild(gradeSpan);
+                container.appendChild(valueSpan);
+                cell.appendChild(container);
+            }
         });
 
         // 操作ボタン
