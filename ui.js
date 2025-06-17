@@ -14,6 +14,7 @@ let regSpeedEl;        // 登録用走力
 let regArmStrengthEl;  // 登録用肩力
 let regDefenseEl;      // 登録用守備力
 let regCatchingEl;     // 登録用捕球
+let regMemoEl;         // 登録用メモ  <-- 追加
 let regRegisterButtonEl; // 登録ボタン
 let regClearButtonEl;    // クリアボタン
 
@@ -38,6 +39,7 @@ export function getUIElements() {
     regArmStrengthEl = document.getElementById('reg-player-armstrength');
     regDefenseEl = document.getElementById('reg-player-defense');
     regCatchingEl = document.getElementById('reg-player-catching');
+    regMemoEl = document.getElementById('reg-player-memo'); // <-- 追加
     regRegisterButtonEl = document.getElementById('reg-player-register-button');
     regClearButtonEl = document.getElementById('reg-player-clear-button');
 
@@ -57,6 +59,7 @@ export function getUIElements() {
         registrationArmStrength: regArmStrengthEl,
         registrationDefense: regDefenseEl,
         registrationCatching: regCatchingEl,
+        registrationMemo: regMemoEl, // <-- 追加
         registrationRegisterButton: regRegisterButtonEl,
         registrationClearButton: regClearButtonEl,
         playerListTableBody: playerListTableBodyEl,
@@ -72,7 +75,7 @@ export function getUIElements() {
  */
 export function initUI() {
     // getUIElementsを呼び出して要素への参照を確保
-    getUIElements(); 
+    getUIElements();  
 
     // 登録ボタンのイベントリスナーを設定
     regRegisterButtonEl.addEventListener('click', handleRegistrationFormSubmit);
@@ -85,7 +88,7 @@ export function initUI() {
  * @param {Event} event - クリックイベントオブジェクト
  */
 async function handleRegistrationFormSubmit(event) {
-    event.preventDefault(); 
+    event.preventDefault();  
 
     if (!currentLoggedInUser) {
         alert('選手を登録するにはログインが必要です。');
@@ -103,10 +106,11 @@ async function handleRegistrationFormSubmit(event) {
     const armStrength = parseInt(regArmStrengthEl.value);
     const defense = parseInt(regDefenseEl.value);
     const catching = parseInt(regCatchingEl.value);
+    const memo = regMemoEl.value; // <-- 追加
 
     // 入力値のバリデーション
-    if (!name || isNaN(enrollmentYear) || isNaN(throwing) || isNaN(dandou) || 
-        isNaN(meet) || isNaN(power) || isNaN(speed) || isNaN(armStrength) || 
+    if (!name || isNaN(enrollmentYear) || isNaN(throwing) || isNaN(dandou) ||  
+        isNaN(meet) || isNaN(power) || isNaN(speed) || isNaN(armStrength) ||  
         isNaN(defense) || isNaN(catching)) {
         alert('全ての項目を正しく入力してください！');
         return;
@@ -123,6 +127,7 @@ async function handleRegistrationFormSubmit(event) {
         armStrength: armStrength,
         defense: defense,
         catching: catching,
+        memo: memo, // <-- 追加
     };
 
     // 登録処理
@@ -144,6 +149,7 @@ export function clearRegistrationForm() {
     regArmStrengthEl.value = '';
     regDefenseEl.value = '';
     regCatchingEl.value = '';
+    regMemoEl.value = ''; // <-- 追加
 }
 
 /**
@@ -218,7 +224,7 @@ export function updatePlayerListUI(playersData = []) {
     if (playersData.length === 0) {
         const noPlayerRow = playerListTableBodyEl.insertRow(0); // 登録行の前に挿入
         const cell = noPlayerRow.insertCell();
-        cell.colSpan = 11; // 全ての列を結合
+        cell.colSpan = 12; // 全ての列を結合 (メモ列が追加されたため11から12へ変更)
         cell.textContent = 'まだ選手がいません。';
         noPlayerRow.classList.add('no-player-message');
     }
@@ -250,7 +256,7 @@ export function updatePlayerListUI(playersData = []) {
         return a.name.localeCompare(b.name);
     });
 
-    playersWithGrade.forEach((player, index) => { 
+    playersWithGrade.forEach((player, index) => {  
         const row = playerListTableBodyEl.insertRow(index); // 取得したデータの順に挿入
         row.dataset.playerId = player.id; // 行に選手IDをデータ属性として保持
 
@@ -260,13 +266,13 @@ export function updatePlayerListUI(playersData = []) {
         const gradeP = document.createElement('p');
         gradeP.classList.add('player-grade');
         gradeP.textContent = `${player.calculatedGrade}年生`;
-        
+         
         const enrollmentYearP = document.createElement('p');
         enrollmentYearP.classList.add('player-enrollment-year');
-        enrollmentYearP.textContent = `(${player.enrollmentYear}年入学)`; 
+        enrollmentYearP.textContent = `(${player.enrollmentYear}年入学)`;  
         playerInfoCell.appendChild(gradeP);
         playerInfoCell.appendChild(enrollmentYearP);
-        
+         
         // 選手名 (テキスト表示)
         row.insertCell().textContent = player.name;
 
@@ -302,7 +308,7 @@ export function updatePlayerListUI(playersData = []) {
                 const gradeSpan = document.createElement('span');
                 const gradeValue = convertStatToGrade(stat.key, player[stat.key]);
                 gradeSpan.textContent = gradeValue;
-                
+                 
                 // 弾道は数値そのままなので、色をつけない
                 if (stat.key !== 'dandou') {
                     applyGradeColor(gradeSpan, stat.key, gradeValue);
@@ -320,6 +326,25 @@ export function updatePlayerListUI(playersData = []) {
             }
         });
 
+        // メモ列の追加
+        const memoCell = row.insertCell();
+        if (currentLoggedInUser) {
+            const textarea = document.createElement('textarea');
+            textarea.value = player.memo || ''; // メモがなければ空文字列
+            textarea.maxLength = 200;
+            textarea.rows = 2; // 表示行数を調整
+            textarea.classList.add('player-memo-textarea');
+            textarea.dataset.field = 'memo';
+            textarea.dataset.playerId = player.id;
+            memoCell.appendChild(textarea);
+        } else {
+            const memoDiv = document.createElement('div');
+            memoDiv.classList.add('player-memo-display');
+            memoDiv.textContent = player.memo || '-'; // メモがなければハイフン表示
+            memoCell.appendChild(memoDiv);
+        }
+
+
         // 操作ボタン
         const actionCell = row.insertCell();
         actionCell.classList.add('action-buttons');
@@ -330,7 +355,7 @@ export function updatePlayerListUI(playersData = []) {
             updateRowButton.textContent = '更新';
             updateRowButton.classList.add('update-btn');
             updateRowButton.addEventListener('click', async () => {
-                // その行の全てのinputから最新のデータを取得して更新
+                // その行の全てのinputとtextareaから最新のデータを取得して更新
                 const updatedData = {};
                 // 各inputのdataset.fieldを使ってデータを収集
                 stats.forEach(stat => {
@@ -339,6 +364,11 @@ export function updatePlayerListUI(playersData = []) {
                         updatedData[stat.key] = parseInt(inputEl.value);
                     }
                 });
+                // メモのtextareaからデータを収集
+                const memoTextarea = row.querySelector('textarea[data-field="memo"]');
+                if (memoTextarea) {
+                    updatedData.memo = memoTextarea.value;
+                }
                 await updatePlayer(player.id, updatedData);
             });
 
