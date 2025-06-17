@@ -1,0 +1,167 @@
+/* CSSは前回からほぼ変更なし */
+.player-table-container table {
+    border-collapse: collapse;
+    border: 1px solid #DDDDDD;
+    width: 100%; /* テーブルの幅を調整 */
+}
+.player-table-container th,
+.player-table-container td {
+    font-weight: bold;
+    font-size: 16px; /* フォントサイズを少し小さく */
+    border: 1px solid #DDDDDD;
+    padding: 8px; /* パディングを追加 */
+    text-align: center; /* 中央揃え */
+}
+.player-table-container th {
+    font-size: 18px;
+    background-color: #f2f2f2; /* ヘッダーの背景色 */
+}
+.player-info-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 中央揃え */
+    justify-content: center;
+}
+.player-grade {
+    font-weight: bold;
+    font-size: 24px; /* 学年を大きく */
+    margin: 0px;
+}
+.player-enrollment-year {
+    text-align: center;
+    font-weight: bold;
+    /*font-size: 10px;*/
+    margin: 0px;
+}
+/* テーブル内のinputフィールドのスタイル */
+.player-table-container input[type="number"],
+.player-table-container input[type="text"] {
+    width: 60px; /* テーブル内の数値入力欄の幅を調整 */
+    text-align: center;
+    padding: 3px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+/* メモ入力欄のスタイル */
+.player-table-container textarea {
+    width: 100%;
+    max-width: 150px; /* 必要に応じて幅を調整 */
+    height: 50px; /* 高さも調整 */
+    box-sizing: border-box; /* paddingとborderをwidth/heightに含める */
+    text-align: left; /* テキストは左寄せ */
+    padding: 5px;
+    font-size: 12px; /* メモのフォントサイズを小さめに */
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    resize: vertical; /* 垂直方向のみリサイズ可能にする */
+}
+
+/* 未ログイン時のメモ表示スタイル */
+.player-memo-display {
+    text-align: left;
+    padding: 5px;
+    font-size: 12px;
+    color: #333;
+    white-space: pre-wrap; /* 改行を保持 */
+    word-break: break-word; /* 長い単語の途中で改行 */
+}
+
+
+/* 登録行のスタイル */
+#registration-row {
+    background-color: #e6ffe6; /* 登録行の背景色 */
+    display: none; /* 初期状態では非表示 */
+}
+#registration-row input,
+#registration-row textarea { /* textareaも追加 */
+    background-color: #fff; /* 登録行の入力フィールドの背景色 */
+}
+.registration-actions button {
+    margin-left: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.registration-actions .register-btn {
+    background-color: #4CAF50; /* 緑 */
+    color: white;
+    border: none;
+    margin-bottom: 5px;
+}
+.registration-actions .clear-btn {
+    background-color: #888; /* グレー */
+    color: white;
+    border: none;
+}
+
+/* 既存の操作ボタン */
+.action-buttons button {
+    margin-left: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.action-buttons .update-btn { /* 新しい更新ボタンのスタイル */
+    background-color: #008CBA; /* 青 */
+    color: white;
+    border: none;
+    margin-bottom: 5px; /* 削除ボタンとの間隔 */
+}
+.action-buttons .delete-btn {
+    background-color: #f44336; /* 赤 */
+    color: white;
+    border: none;
+}
+#auth-status {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+#auth-button {
+    padding: 8px 15px;
+    background-color: #4285F4; /* Google Blue */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+/* 新しいスタイル: アルファベットと数値を表示するコンテナ */
+.stat-display-container {
+    display: flex;
+    flex-direction: column; /* 縦並び */
+    align-items: center; /* 中央揃え */
+}
+.stat-grade {
+    font-weight: bold;
+    font-size: 24px; /* アルファベットの文字サイズを大きく */
+    text-shadow: 1px 1px 0px gray; /* 影を追加 */
+    margin-bottom: 2px; /* 数値との間隔 */
+}
+.stat-value {
+    font-size: 14px; /* 数値の文字サイズ */
+    color: #555; /* 数値の色 */
+}
+/* 各アルファベットランクの色 */
+.grade-G { color: #C0C0C0; } /* view.htmlのF,Gと同じ色 */
+.grade-F { color: #3399ff; } /* view.htmlのFと同じ色 */
+.grade-E { color: #aaff33; } /* view.htmlのEと同じ色 */
+.grade-D { color: #ffdd55; } /* view.htmlのDと同じ色 */
+.grade-C { color: #ff9900; } /* view.htmlのCと同じ色 */
+.grade-B { color: red; } /* view.htmlのBと同じ色 */
+.grade-A { color: magenta; } /* view.htmlのAと同じ色 */
+.grade-S { color: hotpink; } /* view.htmlのSと同じ色 (pinkから変更) */
+/* 送球のG,Fがcrimsonになっているので、それに合わせる */
+.grade-throwing-G { color: crimson; }
+.grade-throwing-F { color: crimson; }
+.grade-throwing-E { color: #C0C0C0; }
+.grade-throwing-D { color: #C0C0C0; }
+.grade-throwing-C { color: #C0C0C0; }
+.grade-throwing-B { color: #1499db; }
+.grade-throwing-A { color: #1499db; }
+.grade-throwing-S { color: #dbba14; }
