@@ -1,12 +1,12 @@
 // Firebase Firestoreの関数をインポート
-import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js"; 
+import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 // UI関連の関数をインポート（データ変更時にUIを更新するため）
 import { updatePlayerListUI, getUIElements } from './ui.js';
 // 認証関連の変数をインポート（登録・更新・削除時にユーザーIDを使用するため）
-import { currentLoggedInUser } from './auth.js'; 
+import { currentLoggedInUser } from './auth.js';
 
 let db;
-let unsubscribeFromPlayers = null; 
+let unsubscribeFromPlayers = null;
 let playerListTableBody; // <table>の<tbody>要素を保持する変数に変更
 
 /**
@@ -34,11 +34,12 @@ export async function addPlayer(playerData) {
     try {
         const docRef = await addDoc(collection(db, "players"), {
             ...playerData,
+            memo: playerData.memo || '', // memoフィールドを追加、もし値がなければ空文字列
             registeredBy: currentLoggedInUser.uid // 登録ユーザーIDを追加
         });
         alert(`〇選手を登録しました ID：${docRef.id}`);
     } catch (e) {
-        alert(`✖選手の登録に失敗しました。詳細: ${e.message}`); 
+        alert(`✖選手の登録に失敗しました。詳細: ${e.message}`);
     }
 }
 
@@ -54,6 +55,7 @@ export async function updatePlayer(id, playerData) {
     }
     try {
         const playerRef = doc(db, "players", id);
+        // playerDataには、ステータスとmemoが含まれる可能性がある
         await updateDoc(playerRef, playerData);
         alert(`選手を更新しました ID：${id}`);
     } catch (e) {
@@ -71,13 +73,13 @@ export async function deletePlayer(id) {
         alert('選手を削除するにはログインが必要です。');
         return;
     }
-    if (confirm('本当にこの選手を削除しますか？')) { 
+    if (confirm('本当にこの選手を削除しますか？')) {
         try {
             await deleteDoc(doc(db, "players", id));
             console.log(`選手を削除しました。（ID：${id}）`);
         } catch (e) {
             console.error(`選手削除エラー：${e}`);
-            alert(`選手の削除に失敗しました。（詳細：${e.message}）`); 
+            alert(`選手の削除に失敗しました。（詳細：${e.message}）`);
         }
     }
 }
@@ -89,7 +91,7 @@ export function startListeningToPlayers() {
     if (!db) {
         console.error("Firestore database (db) is not initialized.");
         if (playerListTableBody) {
-             playerListTableBody.innerHTML = '<tr><td colspan="11">初期化中...</td></tr>';
+             playerListTableBody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>'; // colSpanを12に変更
         }
         return;
     }
@@ -107,11 +109,11 @@ export function startListeningToPlayers() {
     unsubscribeFromPlayers = onSnapshot(q, (querySnapshot) => {
         const playersData = [];
         querySnapshot.forEach((doc) => {
-            playersData.push({ id: doc.id, ...doc.data() }); 
+            playersData.push({ id: doc.id, ...doc.data() });
         });
 
         // データが取得されたらUIを更新
-        updatePlayerListUI(playersData); 
+        updatePlayerListUI(playersData);
     }, (error) => {
         console.error("データの読み込みエラー (onSnapshot):", error);
         // エラー時でも登録行は表示されるようにするため、<tbody>の内容を直接操作しない
@@ -124,7 +126,7 @@ export function startListeningToPlayers() {
             const newErrorRow = playerListTableBody.insertRow(0); // テーブルの先頭に挿入
             newErrorRow.classList.add('error-message-row');
             const cell = newErrorRow.insertCell();
-            cell.colSpan = 11;
+            cell.colSpan = 12; // colSpanを12に変更
             cell.textContent = `データの読み込みに失敗しました。詳細: ${error.message}`;
             cell.style.color = 'red';
         }
