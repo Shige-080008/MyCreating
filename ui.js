@@ -1,27 +1,29 @@
+// ui.js
+
 // Firebase Firestoreの登録・更新・削除関数をインポート
 import { addPlayer, updatePlayer, deletePlayer } from './firestore.js';
 // 認証のログイン状態をインポート（編集・削除ボタンの表示制御用）
-import { currentLoggedInUser } from './auth.js';
+import { currentUser } from './auth.js'; // currentLoggedInUser を currentUser に変更
 
 // HTML要素への参照を保持する変数群 (ID名を変更)
-let regEnrollmentYearEl; // 登録用入学年
-let regNameEl;         // 登録用選手名
-let regThrowingEl;     // 登録用送球
-let regDandouEl;       // 登録用弾道
-let regMeetEl;         // 登録用ミート
-let regPowerEl;       // 登録用パワー
-let regSpeedEl;        // 登録用走力
-let regArmStrengthEl;  // 登録用肩力
-let regDefenseEl;      // 登録用守備力
-let regCatchingEl;     // 登録用捕球
-let regMemoEl;         // 登録用メモ  <-- 追加
-let regRegisterButtonEl; // 登録ボタン
-let regClearButtonEl;    // クリアボタン
+let regYearEl;      // regEnrollmentYearEl を regYearEl に短縮
+let regNameEl;      // regNameEl (変更なし、短いので)
+let regThrowEl;     // regThrowingEl を regThrowEl に短縮
+let regDandouEl;    // regDandouEl (変更なし、短いので)
+let regMeetEl;      // regMeetEl (変更なし、短いので)
+let regPowerEl;     // regPowerEl (変更なし、短いので)
+let regSpeedEl;     // regSpeedEl (変更なし、短いので)
+let regArmEl;       // regArmStrengthEl を regArmEl に短縮
+let regDefenseEl;   // regDefenseEl (変更なし、短いので)
+let regCatchEl;     // regCatchingEl を regCatchEl に短縮
+let regMemoEl;      // regMemoEl (変更なし、短いので)
+let regBtnEl;       // regRegisterButtonEl を regBtnEl に短縮
+let clearBtnEl;     // regClearButtonEl を clearBtnEl に短縮
 
-let playerListTableBodyEl; // tbody要素
-let authStatusDivEl;
-let authButtonEl;
-let registrationRowEl; // 新規登録行のDOM要素
+let playerListTbodyEl; // playerListTableBodyEl を playerListTbodyEl に短縮
+let authStatusEl;      // authStatusDivEl を authStatusEl に短縮
+let authBtnEl;         // authButtonEl を authBtnEl に短縮
+let regRowEl;          // registrationRowEl を regRowEl に短縮
 
 /**
  * UI要素を取得し、それらへの参照をグローバル変数に格納する関数
@@ -29,43 +31,43 @@ let registrationRowEl; // 新規登録行のDOM要素
  */
 export function getUIElements() {
     // 登録用の入力フィールド
-    regEnrollmentYearEl = document.getElementById('reg-enrollment-year');
-    regNameEl = document.getElementById('reg-player-name');
-    regThrowingEl = document.getElementById('reg-player-throwing');
-    regDandouEl = document.getElementById('reg-player-dandou');
-    regMeetEl = document.getElementById('reg-player-meet');
-    regPowerEl = document.getElementById('reg-player-power');
-    regSpeedEl = document.getElementById('reg-player-speed');
-    regArmStrengthEl = document.getElementById('reg-player-armstrength');
-    regDefenseEl = document.getElementById('reg-player-defense');
-    regCatchingEl = document.getElementById('reg-player-catching');
-    regMemoEl = document.getElementById('reg-player-memo'); // <-- 追加
-    regRegisterButtonEl = document.getElementById('reg-player-register-button');
-    regClearButtonEl = document.getElementById('reg-player-clear-button');
+    regYearEl = document.getElementById('reg-year');         // ID名変更
+    regNameEl = document.getElementById('reg-name');         // ID名変更
+    regThrowEl = document.getElementById('reg-throw');       // ID名変更
+    regDandouEl = document.getElementById('reg-dandou');     // ID名変更
+    regMeetEl = document.getElementById('reg-meet');         // ID名変更
+    regPowerEl = document.getElementById('reg-power');       // ID名変更
+    regSpeedEl = document.getElementById('reg-speed');       // ID名変更
+    regArmEl = document.getElementById('reg-arm');           // ID名変更
+    regDefenseEl = document.getElementById('reg-defense');   // ID名変更
+    regCatchEl = document.getElementById('reg-catch');       // ID名変更
+    regMemoEl = document.getElementById('reg-memo');         // ID名変更
+    regBtnEl = document.getElementById('reg-btn');           // ID名変更
+    clearBtnEl = document.getElementById('clear-btn');       // ID名変更
 
-    playerListTableBodyEl = document.querySelector('#player-list-table tbody'); // tbodyを選択
-    authStatusDivEl = document.getElementById('auth-status');
-    authButtonEl = document.getElementById('auth-button');
-    registrationRowEl = document.getElementById('registration-row'); // 新規登録行を取得
+    playerListTbodyEl = document.querySelector('#player-list-table tbody'); // tbodyを選択
+    authStatusEl = document.getElementById('auth-status');
+    authBtnEl = document.getElementById('auth-btn');         // ID名変更
+    regRowEl = document.getElementById('reg-row');           // ID名変更
 
     return {
-        registrationEnrollmentYear: regEnrollmentYearEl,
-        registrationName: regNameEl,
-        registrationThrowing: regThrowingEl,
-        registrationDandou: regDandouEl,
-        registrationMeet: regMeetEl,
-        registrationPower: regPowerEl,
-        registrationSpeed: regSpeedEl,
-        registrationArmStrength: regArmStrengthEl,
-        registrationDefense: regDefenseEl,
-        registrationCatching: regCatchingEl,
-        registrationMemo: regMemoEl, // <-- 追加
-        registrationRegisterButton: regRegisterButtonEl,
-        registrationClearButton: regClearButtonEl,
-        playerListTableBody: playerListTableBodyEl,
-        authStatusDiv: authStatusDivEl,
-        authButton: authButtonEl,
-        registrationRow: registrationRowEl, // 登録行も返す
+        regYear: regYearEl,           // プロパティ名変更
+        regName: regNameEl,           // プロパティ名変更
+        regThrow: regThrowEl,         // プロパティ名変更
+        regDandou: regDandouEl,       // プロパティ名変更
+        regMeet: regMeetEl,           // プロパティ名変更
+        regPower: regPowerEl,         // プロパティ名変更
+        regSpeed: regSpeedEl,         // プロパティ名変更
+        regArm: regArmEl,             // プロパティ名変更
+        regDefense: regDefenseEl,     // プロパティ名変更
+        regCatch: regCatchEl,         // プロパティ名変更
+        regMemo: regMemoEl,           // プロパティ名変更
+        regBtn: regBtnEl,             // プロパティ名変更
+        clearBtn: clearBtnEl,         // プロパティ名変更
+        playerListTbody: playerListTbodyEl, // プロパティ名変更
+        authStatusEl: authStatusEl,   // プロパティ名変更
+        authBtn: authBtnEl,           // プロパティ名変更
+        regRowEl: regRowEl,           // プロパティ名変更
     };
 }
 
@@ -75,42 +77,42 @@ export function getUIElements() {
  */
 export function initUI() {
     // getUIElementsを呼び出して要素への参照を確保
-    getUIElements();  
+    getUIElements();  
 
     // 登録ボタンのイベントリスナーを設定
-    regRegisterButtonEl.addEventListener('click', handleRegistrationFormSubmit);
+    regBtnEl.addEventListener('click', handleRegSubmit); // regRegisterButtonEl と handleRegistrationFormSubmit を変更
     // クリアボタンのイベントリスナーを設定
-    regClearButtonEl.addEventListener('click', clearRegistrationForm);
+    clearBtnEl.addEventListener('click', clearRegForm); // regClearButtonEl と clearRegistrationForm を変更
 }
 
 /**
  * 登録フォーム（テーブル内の登録行）送信時の処理
  * @param {Event} event - クリックイベントオブジェクト
  */
-async function handleRegistrationFormSubmit(event) {
-    event.preventDefault();  
+async function handleRegSubmit(event) { // handleRegistrationFormSubmit を handleRegSubmit に変更
+    event.preventDefault();  
 
-    if (!currentLoggedInUser) {
+    if (!currentUser) { // currentLoggedInUser を currentUser に変更
         alert('選手を登録するにはログインが必要です。');
         return;
     }
 
     // 各入力フィールドから値を取得し、数値に変換
-    const enrollmentYear = parseInt(regEnrollmentYearEl.value);
+    const enrollmentYear = parseInt(regYearEl.value);     // regEnrollmentYearEl を regYearEl に変更
     const name = regNameEl.value;
-    const throwing = parseInt(regThrowingEl.value);
+    const throwing = parseInt(regThrowEl.value);          // regThrowingEl を regThrowEl に変更
     const dandou = parseInt(regDandouEl.value);
     const meet = parseInt(regMeetEl.value);
     const power = parseInt(regPowerEl.value);
     const speed = parseInt(regSpeedEl.value);
-    const armStrength = parseInt(regArmStrengthEl.value);
+    const armStrength = parseInt(regArmEl.value);         // regArmStrengthEl を regArmEl に変更
     const defense = parseInt(regDefenseEl.value);
-    const catching = parseInt(regCatchingEl.value);
-    const memo = regMemoEl.value; // <-- 追加
+    const catching = parseInt(regCatchEl.value);          // regCatchingEl を regCatchEl に変更
+    const memo = regMemoEl.value;
 
     // 入力値のバリデーション
-    if (!name || isNaN(enrollmentYear) || isNaN(throwing) || isNaN(dandou) ||  
-        isNaN(meet) || isNaN(power) || isNaN(speed) || isNaN(armStrength) ||  
+    if (!name || isNaN(enrollmentYear) || isNaN(throwing) || isNaN(dandou) ||  
+        isNaN(meet) || isNaN(power) || isNaN(speed) || isNaN(armStrength) ||  
         isNaN(defense) || isNaN(catching)) {
         alert('全ての項目を正しく入力してください！');
         return;
@@ -127,29 +129,29 @@ async function handleRegistrationFormSubmit(event) {
         armStrength: armStrength,
         defense: defense,
         catching: catching,
-        memo: memo, // <-- 追加
+        memo: memo,
     };
 
     // 登録処理
     await addPlayer(playerData);
-    clearRegistrationForm(); // 登録後にフォームをクリア
+    clearRegForm(); // clearRegistrationForm を clearRegForm に変更
 }
 
 /**
  * 登録フォームの入力フィールドをすべてクリアする関数
  */
-export function clearRegistrationForm() {
-    regEnrollmentYearEl.value = '';
+export function clearRegForm() { // clearRegistrationForm を clearRegForm に変更
+    regYearEl.value = '';     // regEnrollmentYearEl を regYearEl に変更
     regNameEl.value = '';
-    regThrowingEl.value = '';
+    regThrowEl.value = '';    // regThrowingEl を regThrowEl に変更
     regDandouEl.value = '';
     regMeetEl.value = '';
     regPowerEl.value = '';
     regSpeedEl.value = '';
-    regArmStrengthEl.value = '';
+    regArmEl.value = '';      // regArmStrengthEl を regArmEl に変更
     regDefenseEl.value = '';
-    regCatchingEl.value = '';
-    regMemoEl.value = ''; // <-- 追加
+    regCatchEl.value = '';    // regCatchingEl を regCatchEl に変更
+    regMemoEl.value = '';
 }
 
 /**
@@ -159,6 +161,11 @@ export function clearRegistrationForm() {
  * @returns {string} アルファベットランク
  */
 function convertStatToGrade(statType, value) {
+    // 入力値が不正な場合（NaNなど）は空文字列を返す
+    if (isNaN(value)) {
+        return '';
+    }
+
     if (statType === 'throwing') {
         const grades = ['G', 'F', 'E', 'D', 'C', 'B', 'A', 'S'];
         // 送球は0～7の数値がG～Sに対応
@@ -191,7 +198,10 @@ function convertStatToGrade(statType, value) {
  */
 function applyGradeColor(element, statType, grade) {
     // 既存のクラスを一度クリア
-    element.className = '';
+    element.classList.remove('grade-G', 'grade-F', 'grade-E', 'grade-D', 'grade-C', 'grade-B', 'grade-A', 'grade-S',
+                             'grade-throwing-G', 'grade-throwing-F', 'grade-throwing-E', 'grade-throwing-D',
+                             'grade-throwing-C', 'grade-throwing-B', 'grade-throwing-A', 'grade-throwing-S');
+
     // 特定のステータスに合わせたクラスを追加 (例: throwing-G)
     // それ以外のステータスは汎用的なクラス (例: grade-G)
     if (statType === 'throwing') {
@@ -208,21 +218,21 @@ function applyGradeColor(element, statType, grade) {
  */
 export function updatePlayerListUI(playersData = []) {
     // まず、既存の選手データ行をすべて削除
-    // 登録行は残すため、registrationRowEl以外のtr要素を削除
-    Array.from(playerListTableBodyEl.children).forEach(child => {
-        if (child.id !== 'registration-row') {
+    // 登録行は残すため、regRowEl以外のtr要素を削除
+    Array.from(playerListTbodyEl.children).forEach(child => { // playerListTableBodyEl を playerListTbodyEl に変更
+        if (child.id !== 'reg-row') { // registrationRow を regRow に変更
             child.remove();
         }
     });
 
     // エラーメッセージがあれば削除
-    const errorRow = playerListTableBodyEl.querySelector('.error-message-row');
+    const errorRow = playerListTbodyEl.querySelector('.error-message-row'); // playerListTableBodyEl を playerListTbodyEl に変更
     if (errorRow) {
         errorRow.remove();
     }
 
     if (playersData.length === 0) {
-        const noPlayerRow = playerListTableBodyEl.insertRow(0); // 登録行の前に挿入
+        const noPlayerRow = playerListTbodyEl.insertRow(0); // 登録行の前に挿入 // playerListTableBodyEl を playerListTbodyEl に変更
         const cell = noPlayerRow.insertCell();
         cell.colSpan = 12; // 全ての列を結合 (メモ列が追加されたため11から12へ変更)
         cell.textContent = 'まだ選手がいません。';
@@ -256,8 +266,8 @@ export function updatePlayerListUI(playersData = []) {
         return a.name.localeCompare(b.name);
     });
 
-    playersWithGrade.forEach((player, index) => {  
-        const row = playerListTableBodyEl.insertRow(index); // 取得したデータの順に挿入
+    playersWithGrade.forEach((player, index) => {  
+        const row = playerListTbodyEl.insertRow(index); // 取得したデータの順に挿入 // playerListTableBodyEl を playerListTbodyEl に変更
         row.dataset.playerId = player.id; // 行に選手IDをデータ属性として保持
 
         // 学年と入学年
@@ -266,13 +276,13 @@ export function updatePlayerListUI(playersData = []) {
         const gradeP = document.createElement('p');
         gradeP.classList.add('player-grade');
         gradeP.textContent = `${player.calculatedGrade}年生`;
-         
+          
         const enrollmentYearP = document.createElement('p');
         enrollmentYearP.classList.add('player-enrollment-year');
-        enrollmentYearP.textContent = `(${player.enrollmentYear}年入学)`;  
+        enrollmentYearP.textContent = `(${player.enrollmentYear}年入学)`;  
         playerInfoCell.appendChild(gradeP);
         playerInfoCell.appendChild(enrollmentYearP);
-         
+          
         // 選手名 (テキスト表示)
         row.insertCell().textContent = player.name;
 
@@ -290,45 +300,61 @@ export function updatePlayerListUI(playersData = []) {
 
         stats.forEach(stat => {
             const cell = row.insertCell();
-            if (currentLoggedInUser) {
-                // ログイン中は編集可能なinputタグを表示
+            cell.classList.add('stat-cell-container'); // 親要素にクラスを追加
+
+            const gradeSpan = document.createElement('span');
+            gradeSpan.classList.add('stat-grade');
+
+            const valueSpan = document.createElement('span');
+            valueSpan.classList.add('stat-value');
+
+            // 初期表示のランクと数値を設定
+            const initialGradeValue = convertStatToGrade(stat.key, player[stat.key]);
+            gradeSpan.textContent = initialGradeValue;
+            valueSpan.textContent = player[stat.key]; // 数値のみを表示
+
+            // 弾道以外のランクに色を適用
+            if (stat.key !== 'dandou') {
+                applyGradeColor(gradeSpan, stat.key, initialGradeValue);
+            }
+
+            cell.appendChild(gradeSpan);
+            
+            // ログイン中の場合のみ、入力欄を表示
+            if (currentUser) { // currentLoggedInUser を currentUser に変更
                 const input = document.createElement('input');
                 input.type = 'number';
                 input.value = player[stat.key];
                 input.min = stat.min;
                 input.max = stat.max;
-                input.dataset.field = stat.key; // Firestoreのフィールド名をデータ属性として保持
-                input.dataset.playerId = player.id; // 選手IDをデータ属性として保持
-                cell.appendChild(input);
+                input.dataset.field = stat.key;
+                input.dataset.playerId = player.id;
+                input.classList.add('stat-input'); // 新しいクラスを追加
+
+                // inputの値が変更されたらランク表示を更新するイベントリスナー
+                input.addEventListener('input', (e) => {
+                    const newValue = parseInt(e.target.value);
+                    const newGrade = convertStatToGrade(stat.key, newValue);
+                    gradeSpan.textContent = newGrade;
+                    // valueSpan.textContent = newValue; // 数値はinput自身が表示するため不要
+                    
+                    // 弾道以外のランクに色を再適用
+                    if (stat.key !== 'dandou') {
+                        applyGradeColor(gradeSpan, stat.key, newGrade);
+                    } else {
+                           gradeSpan.classList.add('stat-grade'); // 弾道も見た目は大きく
+                    }
+                });
+                cell.appendChild(input); // inputを直接セルの子要素として追加
             } else {
-                // 未ログイン中はアルファベットランクと数値を両方表示
-                const container = document.createElement('div');
-                container.classList.add('stat-display-container');
-
-                const gradeSpan = document.createElement('span');
-                const gradeValue = convertStatToGrade(stat.key, player[stat.key]);
-                gradeSpan.textContent = gradeValue;
-                 
-                // 弾道は数値そのままなので、色をつけない
-                if (stat.key !== 'dandou') {
-                    applyGradeColor(gradeSpan, stat.key, gradeValue);
-                } else {
-                    gradeSpan.classList.add('stat-grade'); // 弾道も見た目は大きく
-                }
-
-                const valueSpan = document.createElement('span');
-                valueSpan.classList.add('stat-value');
-                valueSpan.textContent = `(${player[stat.key]})`; // 数値を括弧で囲んで表示
-
-                container.appendChild(gradeSpan);
-                container.appendChild(valueSpan);
-                cell.appendChild(container);
+                // 未ログイン時は数値spanを表示
+                cell.appendChild(valueSpan);
             }
         });
 
         // メモ列の追加
         const memoCell = row.insertCell();
-        if (currentLoggedInUser) {
+        if (currentUser) { // currentLoggedInUser を currentUser に変更
             const textarea = document.createElement('textarea');
             textarea.value = player.memo || ''; // メモがなければ空文字列
             textarea.maxLength = 200;
@@ -350,7 +376,7 @@ export function updatePlayerListUI(playersData = []) {
         actionCell.classList.add('action-buttons');
 
         // ログインしている場合のみ、更新・削除ボタンを表示
-        if (currentLoggedInUser) {
+        if (currentUser) { // currentLoggedInUser を currentUser に変更
             const updateRowButton = document.createElement('button');
             updateRowButton.textContent = '更新';
             updateRowButton.classList.add('update-btn');
@@ -387,13 +413,13 @@ export function updatePlayerListUI(playersData = []) {
     });
 
     // 最後に登録行を再度追加 (DOM操作で移動されるため、毎回明示的に最後にする)
-    playerListTableBodyEl.appendChild(registrationRowEl);
+    playerListTbodyEl.appendChild(regRowEl); // playerListTableBodyEl と registrationRowEl を変更
 
     // ログイン状態に応じて登録行の表示/非表示を更新
-    if (currentLoggedInUser) {
-        registrationRowEl.style.display = 'table-row';
+    if (currentUser) { // currentLoggedInUser を currentUser に変更
+        regRowEl.style.display = 'table-row'; // registrationRowEl を regRowEl に変更
     } else {
-        registrationRowEl.style.display = 'none';
-        clearRegistrationForm(); // 非表示にする際はクリア
+        // ここに以前の `registrationRowEl.style.display = 'none';` があったと思われますが、
+        // auth.jsで既に処理されているため、二重の記述は不要です。
     }
 }

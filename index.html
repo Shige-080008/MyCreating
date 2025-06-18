@@ -9,7 +9,7 @@
 <body>
     <h1>栄冠ナイン 選手データ管理</h1>
 
-    <button id="auth-button">Googleでログイン</button>
+    <button id="auth-btn">Googleでログイン</button>
     <div id="auth-status"></div>
 
     <hr>
@@ -34,27 +34,27 @@
                 </tr>
             </thead>
             <tbody>
-                <tr id="registration-row">
+                <tr id="reg-row">
                     <td>
                         <div class="player-info-cell">
                             <p class="player-grade">新規登録</p>
                             <p class="player-enrollment-year">入学年:</p>
-                            <input type="number" id="reg-enrollment-year" required min="1932" max="2500">
+                            <input type="number" id="reg-year" required min="1932" max="2500">
                         </div>
                     </td>
-                    <td><input type="text" id="reg-player-name" required minlength="1" maxlength="10"></td>
-                    <td><input type="number" id="reg-player-throwing" min="0" max="7" required></td>
-                    <td><input type="number" id="reg-player-dandou" min="1" max="4" required></td>
-                    <td><input type="number" id="reg-player-meet" min="1" max="100" required></td>
-                    <td><input type="number" id="reg-player-power" min="1" max="100" required></td>
-                    <td><input type="number" id="reg-player-speed" min="1" max="100" required></td>
-                    <td><input type="number" id="reg-player-armstrength" min="1" max="100" required></td>
-                    <td><input type="number" id="reg-player-defense" min="1" max="100" required></td>
-                    <td><input type="number" id="reg-player-catching" min="1" max="100" required></td>
-                    <td><textarea id="reg-player-memo" maxlength="200" placeholder="メモを入力（200字まで）"></textarea></td>
+                    <td><input type="text" id="reg-name" required minlength="1" maxlength="10"></td>
+                    <td><input type="number" id="reg-throw" min="0" max="7" required></td>
+                    <td><input type="number" id="reg-dandou" min="1" max="4" required></td>
+                    <td><input type="number" id="reg-meet" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-power" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-speed" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-arm" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-defense" min="1" max="100" required></td>
+                    <td><input type="number" id="reg-catch" min="1" max="100" required></td>
+                    <td><textarea id="reg-memo" maxlength="200" placeholder="メモを入力（200字まで）"></textarea></td>
                     <td class="registration-actions">
-                        <button class="register-btn" id="reg-player-register-button">登録</button>
-                        <button class="clear-btn" id="reg-player-clear-button">クリア</button>
+                        <button class="register-btn" id="reg-btn">登録</button>
+                        <button class="clear-btn" id="clear-btn">クリア</button>
                     </td>
                 </tr>
             </tbody>
@@ -82,7 +82,7 @@
             messagingSenderId: "449151069520",
             appId: "1:449151069520:web:8829b6b5b70db2b1ed1055"
         };
-         
+          
         // Firebaseアプリの初期化
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);

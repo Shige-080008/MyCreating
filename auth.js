@@ -5,28 +5,27 @@ import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from
 // Firestore関連の関数をインポート（認証状態によってFirestoreの監視を開始するため）
 import { startListeningToPlayers } from './firestore.js'; 
 // UI関連の関数をインポート（認証状態によってUIを更新するため）
-import { getUIElements, clearRegistrationForm } from './ui.js';
+import { getUIElements, clearRegForm } from './ui.js';
 
 let auth;
 let googleProvider;
-let signInWithPopupFunc;
-let signOutFunc;
-let onAuthStateChangedFunc;
-export let currentLoggedInUser = null; 
+let signInPopupFn; // signInWithPopupFunc を signInPopupFn に短縮
+let signOutFn;     // signOutFunc を signOutFn に短縮
+let onAuthChangedFn; // onAuthStateChangedFunc を onAuthChangedFn に短縮
+export let currentUser = null; // currentLoggedInUser を currentUser に短縮
 
-let authButton;
-let authStatusDiv;
-let registrationRow; // 新規登録用の行の参照
+let authBtn;      // authButton を authBtn に短縮
+let authStatusEl; // authStatusDiv を authStatusEl に短縮
+let regRowEl;     // registrationRow を regRowEl に短縮
 
 /**
  * ログイン/ログアウトボタンがクリックされた時の処理
- * initAuth 関数よりも上に移動
  */
-async function handleAuthButtonClick() { // この関数定義を上に移動
-    if (currentLoggedInUser) {
+async function handleAuthClick() { // handleAuthButtonClick を handleAuthClick に短縮
+    if (currentUser) {
         // ログアウト処理
         try {
-            await signOutFunc(auth);
+            await signOutFn(auth);
             alert('ログアウトしました');
             startListeningToPlayers(); 
         } catch (error) {
@@ -35,7 +34,7 @@ async function handleAuthButtonClick() { // この関数定義を上に移動
     } else {
         // ログイン処理
         try {
-            const result = await signInWithPopupFunc(auth, googleProvider);
+            const result = await signInPopupFn(auth, googleProvider);
             alert(`Googleでログインしました：${result.user.email}`);
             startListeningToPlayers(); 
         } catch (error) {
@@ -58,25 +57,25 @@ async function handleAuthButtonClick() { // この関数定義を上に移動
  * 認証機能を初期化する関数
  * @param {object} firebaseAuth - Firebase Authオブジェクト
  * @param {object} provider - GoogleAuthProviderオブジェクト
- * @param {function} signInPopupFn - signInWithPopup関数
- * @param {function} signOutFn - signOut関数
- * @param {function} onAuthChangedFn - onAuthStateChanged関数
+ * @param {function} signInPopupFunc - signInWithPopup関数
+ * @param {function} signOutFunc - signOut関数
+ * @param {function} onAuthChangedFunc - onAuthStateChanged関数
  */
-export function initAuth(firebaseAuth, provider, signInPopupFn, signOutFn, onAuthChangedFn) {
+export function initAuth(firebaseAuth, provider, signInPopupFunc, signOutFunc, onAuthChangedFunc) {
     auth = firebaseAuth;
     googleProvider = provider;
-    signInWithPopupFunc = signInPopupFn;
-    signOutFunc = signOutFn;
-    onAuthStateChangedFunc = onAuthChangedFn; 
+    signInPopupFn = signInPopupFunc;
+    signOutFn = signOutFunc;
+    onAuthChangedFn = onAuthChangedFunc; 
 
     // UI要素の取得
     const elements = getUIElements();
-    authButton = elements.authButton;
-    authStatusDiv = elements.authStatusDiv;
-    registrationRow = elements.registrationRow;
+    authBtn = elements.authBtn;      // authButton を authBtn に変更
+    authStatusEl = elements.authStatusEl; // authStatusDiv を authStatusEl に変更
+    regRowEl = elements.regRowEl;     // registrationRow を regRowEl に変更
 
     // ログイン/ログアウトボタンのイベントリスナーを設定
-    authButton.addEventListener('click', handleAuthButtonClick); // ここで参照されるので、定義が上にあるべき
+    authBtn.addEventListener('click', handleAuthClick); // handleAuthButtonClick を handleAuthClick に変更
 
     // 認証状態の監視を開始
     setupAuthStateObserver();
@@ -86,18 +85,18 @@ export function initAuth(firebaseAuth, provider, signInPopupFn, signOutFn, onAut
  * 認証状態の変更を監視し、UIを更新する関数
  */
 function setupAuthStateObserver() {
-    onAuthStateChangedFunc(auth, (user) => { 
-        currentLoggedInUser = user; 
+    onAuthChangedFn(auth, (user) => { 
+        currentUser = user; 
 
         if (user) {
-            authStatusDiv.textContent = `ログイン中 (${user.email})`;
-            authButton.textContent = 'ログアウト';
-            registrationRow.style.display = 'table-row'; 
+            authStatusEl.textContent = `ログイン中 (${user.email})`;
+            authBtn.textContent = 'ログアウト';
+            regRowEl.style.display = 'table-row'; 
         } else {
-            authStatusDiv.textContent = '未ログイン';
-            authButton.textContent = 'Googleでログイン';
-            registrationRow.style.display = 'none'; 
-            clearRegistrationForm(); 
+            authStatusEl.textContent = '未ログイン';
+            authBtn.textContent = 'Googleでログイン';
+            regRowEl.style.display = 'none'; 
+            clearRegForm(); // clearRegistrationForm を clearRegForm に変更
         }
         // ログイン状態が変わったら、選手リストの表示を更新
         startListeningToPlayers(); 

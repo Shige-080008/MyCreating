@@ -3,11 +3,11 @@ import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, order
 // UI関連の関数をインポート（データ変更時にUIを更新するため）
 import { updatePlayerListUI, getUIElements } from './ui.js';
 // 認証関連の変数をインポート（登録・更新・削除時にユーザーIDを使用するため）
-import { currentLoggedInUser } from './auth.js';
+import { currentUser } from './auth.js'; // currentLoggedInUser を currentUser に変更
 
 let db;
-let unsubscribeFromPlayers = null;
-let playerListTableBody; // <table>の<tbody>要素を保持する変数に変更
+let unsubscribePlayers = null; // unsubscribeFromPlayers を unsubscribePlayers に短縮
+let playerListTbody;           // playerListTableBody を playerListTbody に短縮
 
 /**
  * Firestore機能を初期化する関数
@@ -16,7 +16,7 @@ let playerListTableBody; // <table>の<tbody>要素を保持する変数に変�
 export function initFirestore(firestoreDb) {
     db = firestoreDb;
     const elements = getUIElements();
-    playerListTableBody = elements.playerListTableBody;
+    playerListTbody = elements.playerListTbody; // playerListTableBody を playerListTbody に変更
 
     // アプリケーション起動時にリアルタイム監視を開始
     startListeningToPlayers();
@@ -27,7 +27,7 @@ export function initFirestore(firestoreDb) {
  * @param {object} playerData - 追加する選手データ
  */
 export async function addPlayer(playerData) {
-    if (!currentLoggedInUser) {
+    if (!currentUser) { // currentLoggedInUser を currentUser に変更
         alert('選手を登録するにはログインが必要です。');
         return;
     }
@@ -35,7 +35,7 @@ export async function addPlayer(playerData) {
         const docRef = await addDoc(collection(db, "players"), {
             ...playerData,
             memo: playerData.memo || '', // memoフィールドを追加、もし値がなければ空文字列
-            registeredBy: currentLoggedInUser.uid // 登録ユーザーIDを追加
+            registeredBy: currentUser.uid // 登録ユーザーIDを追加 // currentLoggedInUser を currentUser に変更
         });
         alert(`〇選手を登録しました ID：${docRef.id}`);
     } catch (e) {
@@ -49,7 +49,7 @@ export async function addPlayer(playerData) {
  * @param {object} playerData - 更新する選手データ
  */
 export async function updatePlayer(id, playerData) {
-    if (!currentLoggedInUser) {
+    if (!currentUser) { // currentLoggedInUser を currentUser に変更
         alert('選手を更新するにはログインが必要です。');
         return;
     }
@@ -69,7 +69,7 @@ export async function updatePlayer(id, playerData) {
  * @param {string} id - 削除する選手のドキュメントID
  */
 export async function deletePlayer(id) {
-    if (!currentLoggedInUser) {
+    if (!currentUser) { // currentLoggedInUser を currentUser に変更
         alert('選手を削除するにはログインが必要です。');
         return;
     }
@@ -90,15 +90,15 @@ export async function deletePlayer(id) {
 export function startListeningToPlayers() {
     if (!db) {
         console.error("Firestore database (db) is not initialized.");
-        if (playerListTableBody) {
-             playerListTableBody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>'; // colSpanを12に変更
+        if (playerListTbody) { // playerListTableBody を playerListTbody に変更
+             playerListTbody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>'; // colSpanを12に変更 // playerListTableBody を playerListTbody に変更
         }
         return;
     }
 
     // 以前のリスナーがあれば解除
-    if (unsubscribeFromPlayers) {
-        unsubscribeFromPlayers();
+    if (unsubscribePlayers) { // unsubscribeFromPlayers を unsubscribePlayers に変更
+        unsubscribePlayers(); // unsubscribeFromPlayers を unsubscribePlayers に変更
     }
 
     // クエリを作成 (入学年でソート)
@@ -106,7 +106,7 @@ export function startListeningToPlayers() {
     const q = query(playersCollection, orderBy("enrollmentYear"));
 
     // リアルタイムリスナーを開始
-    unsubscribeFromPlayers = onSnapshot(q, (querySnapshot) => {
+    unsubscribePlayers = onSnapshot(q, (querySnapshot) => { // unsubscribeFromPlayers を unsubscribePlayers に変更
         const playersData = [];
         querySnapshot.forEach((doc) => {
             playersData.push({ id: doc.id, ...doc.data() });
@@ -117,13 +117,13 @@ export function startListeningToPlayers() {
     }, (error) => {
         console.error("データの読み込みエラー (onSnapshot):", error);
         // エラー時でも登録行は表示されるようにするため、<tbody>の内容を直接操作しない
-        if (playerListTableBody) {
+        if (playerListTbody) { // playerListTableBody を playerListTbody に変更
             // エラーメッセージを表示するが、既存の登録行は残す
-            const errorRow = playerListTableBody.querySelector('.error-message-row');
+            const errorRow = playerListTbody.querySelector('.error-message-row'); // playerListTableBody を playerListTbody に変更
             if (errorRow) {
                 errorRow.remove(); // 既存のエラーメッセージがあれば削除
             }
-            const newErrorRow = playerListTableBody.insertRow(0); // テーブルの先頭に挿入
+            const newErrorRow = playerListTbody.insertRow(0); // テーブルの先頭に挿入 // playerListTableBody を playerListTbody に変更
             newErrorRow.classList.add('error-message-row');
             const cell = newErrorRow.insertCell();
             cell.colSpan = 12; // colSpanを12に変更
