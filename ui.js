@@ -279,7 +279,7 @@ export function updatePlayerListUI(playersData = []) {
           
         const enrollmentYearP = document.createElement('p');
         enrollmentYearP.classList.add('player-enrollment-year');
-        enrollmentYearP.textContent = `(${player.enrollmentYear}年入学)`;  
+        enrollmentYearP.textContent = `(入学${player.enrollmentYear}年)`;  
         playerInfoCell.appendChild(gradeP);
         playerInfoCell.appendChild(enrollmentYearP);
           

@@ -41,7 +41,7 @@
     width: 60px; /* テーブル内の数値入力欄の幅を調整 */
     text-align: center;
     padding: 3px;
-    font-size: 1px; /* フォントサイズ */
+    font-size: 18px; /* フォントサイズ */
     border: 1px solid #ddd;
     border-radius: 3px;
 }
