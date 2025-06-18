@@ -41,7 +41,7 @@
     width: 60px; /* テーブル内の数値入力欄の幅を調整 */
     text-align: center;
     padding: 3px;
-    font-size: 20px; /* フォントサイズ */
+    font-size: 1px; /* フォントサイズ */
     border: 1px solid #ddd;
     border-radius: 3px;
 }
@@ -146,7 +146,7 @@
 
 .stat-grade {
     font-weight: bold;
-    font-size: 24px; /* アルファベットの文字サイズを大きく */
+    font-size: 30px; /* アルファベットの文字サイズを大きく */
     text-shadow: 1px 1px 0px gray; /* 影を追加 */
     display: block; /* 追加: ブロックレベル要素として縦並びにする */
     text-align: center; /* 追加: 中央揃えにする */
@@ -162,7 +162,7 @@
 .player-table-container td .stat-input {
     width: 60px; /* 入力欄の幅 */
     text-align: center;
-    font-size: 14px; /* 入力欄のフォントサイズを数値に合わせる */
+    font-size: 20px; /* 入力欄のフォントサイズを数値に合わせる */
     border: 1px solid #ccc;
     border-radius: 3px;
     padding: 2px;
