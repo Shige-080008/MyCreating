@@ -50,13 +50,12 @@
 .player-table-container textarea {
     width: 100%;
     /*max-width: 150px;  必要に応じて幅を調整 */
-    height: 50px; /* 高さも調整 */
+    height: 70px; /* 高さも調整 */
     box-sizing: border-box; /* paddingとborderをwidth/heightに含める */
     text-align: left; /* テキストは左寄せ */
     padding: 5px;
     font-size: 16px; /* メモのフォントサイズを小さめに */
-    border: 1px solid #ddd;
-    border-radius: 3px;
+    border: none;
     resize: vertical; /* 垂直方向のみリサイズ可能にする */
 }
 
