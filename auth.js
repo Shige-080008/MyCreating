@@ -3,31 +3,31 @@
 // Firebase Authenticationの関数をインポート
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 // Firestore関連の関数をインポート（認証状態によってFirestoreの監視を開始するため）
-import { startListeningToPlayers } from './firestore.js'; 
+import { startListeningToPlayers } from './firestore.js';
 // UI関連の関数をインポート（認証状態によってUIを更新するため）
 import { getUIElements, clearRegForm } from './ui.js';
 
 let auth;
 let googleProvider;
-let signInPopupFn; // signInWithPopupFunc を signInPopupFn に短縮
-let signOutFn;     // signOutFunc を signOutFn に短縮
-let onAuthChangedFn; // onAuthStateChangedFunc を onAuthChangedFn に短縮
-export let currentUser = null; // currentLoggedInUser を currentUser に短縮
+let signInPopupFn;
+let signOutFn;
+let onAuthChangedFn;
+export let currentUser = null;
 
-let authBtn;      // authButton を authBtn に短縮
-let authStatusEl; // authStatusDiv を authStatusEl に短縮
-let regRowEl;     // registrationRow を regRowEl に短縮
+let authBtn;
+let authStatusEl;
+let regRowEl;
 
 /**
  * ログイン/ログアウトボタンがクリックされた時の処理
  */
-async function handleAuthClick() { // handleAuthButtonClick を handleAuthClick に短縮
+async function handleAuthClick() {
     if (currentUser) {
         // ログアウト処理
         try {
             await signOutFn(auth);
             alert('ログアウトしました');
-            startListeningToPlayers(); 
+            startListeningToPlayers();
         } catch (error) {
             console.error('ログアウトエラー:', error);
         }
@@ -36,7 +36,7 @@ async function handleAuthClick() { // handleAuthButtonClick を handleAuthClick 
         try {
             const result = await signInPopupFn(auth, googleProvider);
             alert(`Googleでログインしました：${result.user.email}`);
-            startListeningToPlayers(); 
+            startListeningToPlayers();
         } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -66,16 +66,16 @@ export function initAuth(firebaseAuth, provider, signInPopupFunc, signOutFunc, o
     googleProvider = provider;
     signInPopupFn = signInPopupFunc;
     signOutFn = signOutFunc;
-    onAuthChangedFn = onAuthChangedFunc; 
+    onAuthChangedFn = onAuthChangedFunc;
 
     // UI要素の取得
     const elements = getUIElements();
-    authBtn = elements.authBtn;      // authButton を authBtn に変更
-    authStatusEl = elements.authStatusEl; // authStatusDiv を authStatusEl に変更
-    regRowEl = elements.regRowEl;     // registrationRow を regRowEl に変更
+    authBtn = elements.authBtn;
+    authStatusEl = elements.authStatusEl;
+    regRowEl = elements.regRowEl;
 
     // ログイン/ログアウトボタンのイベントリスナーを設定
-    authBtn.addEventListener('click', handleAuthClick); // handleAuthButtonClick を handleAuthClick に変更
+    authBtn.addEventListener('click', handleAuthClick);
 
     // 認証状態の監視を開始
     setupAuthStateObserver();
@@ -85,20 +85,20 @@ export function initAuth(firebaseAuth, provider, signInPopupFunc, signOutFunc, o
  * 認証状態の変更を監視し、UIを更新する関数
  */
 function setupAuthStateObserver() {
-    onAuthChangedFn(auth, (user) => { 
-        currentUser = user; 
+    onAuthChangedFn(auth, (user) => {
+        currentUser = user;
 
         if (user) {
             authStatusEl.textContent = `ログイン中 (${user.email})`;
             authBtn.textContent = 'ログアウト';
-            regRowEl.style.display = 'table-row'; 
+            regRowEl.style.display = 'table-row';
         } else {
             authStatusEl.textContent = '未ログイン';
             authBtn.textContent = 'Googleでログイン';
-            regRowEl.style.display = 'none'; 
-            clearRegForm(); // clearRegistrationForm を clearRegForm に変更
+            regRowEl.style.display = 'none';
+            clearRegForm();
         }
         // ログイン状態が変わったら、選手リストの表示を更新
-        startListeningToPlayers(); 
+        startListeningToPlayers();
     });
 }

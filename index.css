@@ -1,43 +1,33 @@
-/* CSSは前回からほぼ変更なし */
-.player-table-container table {
+.table_player table {
     border-collapse: collapse;
     border: 1px solid #DDDDDD;
     width: 100%; /* テーブルの幅を調整 */
 }
-.player-table-container th,
-.player-table-container td {
+.table_player th,
+.table_player td {
     font-weight: bold;
-    font-size: 16px; /* フォントサイズを少し小さく */
     border: 1px solid #DDDDDD;
     padding-top: 8px; /* パディングを追加 */
     padding-bottom: 8px; /* パディングを追加 */
     text-align: center; /* 中央揃え */
-    /* position: relative; は不要になりました */
 }
-.player-table-container th {
+.table_player th {
     font-size: 18px;
     background-color: #f2f2f2; /* ヘッダーの背景色 */
-}
-.player-info-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 中央揃え */
-    justify-content: center;
 }
 .player-grade {
     font-weight: bold;
     font-size: 24px; /* 学年を大きく */
     margin: 0px;
 }
-.player-enrollment-year {
+.enrollment-year {
     text-align: center;
     font-weight: bold;
-    /*font-size: 10px;*/
     margin: 0px;
 }
 /* テーブル内のinputフィールドのスタイル */
-.player-table-container input[type="number"],
-.player-table-container input[type="text"] {
+.table_player input[type="number"],
+.table_player input[type="text"] {
     width: 60px; /* テーブル内の数値入力欄の幅を調整 */
     text-align: center;
     padding: 3px;
@@ -47,9 +37,8 @@
 }
 
 /* メモ入力欄のスタイル */
-.player-table-container textarea {
+.table_player textarea {
     width: 100%;
-    /*max-width: 150px;  必要に応じて幅を調整 */
     height: 70px; /* 高さも調整 */
     box-sizing: border-box; /* paddingとborderをwidth/heightに含める */
     text-align: left; /* テキストは左寄せ */
@@ -60,10 +49,10 @@
 }
 
 /* 未ログイン時のメモ表示スタイル */
-.player-memo-display {
+.memo-display {
     text-align: left;
     padding: 5px;
-    font-size: 12px;
+    font-size: 15px;
     color: #333;
     white-space: pre-wrap; /* 改行を保持 */
     word-break: break-word; /* 長い単語の途中で改行 */
@@ -71,30 +60,35 @@
     box-sizing: border-box; /* 追加: textareaに合わせてbox-sizingを設定 */
 }
 
+/* Player name font size */
+.name-cell {
+    font-size: 25px; /* Adjust as desired */
+}
+
 
 /* 登録行のスタイル */
-#registration-row {
+#regist_row {
     background-color: #e6ffe6; /* 登録行の背景色 */
     display: none; /* 初期状態では非表示 */
 }
-#registration-row input,
-#registration-row textarea { /* textareaも追加 */
+#regist_row input,
+#regist_row textarea { /* textareaも追加 */
     background-color: #fff; /* 登録行の入力フィールドの背景色 */
 }
-.registration-actions button {
+.Buttons_regist button {
     margin-left: 5px;
     padding: 5px 10px;
     font-size: 14px;
     cursor: pointer;
     border-radius: 3px;
 }
-.registration-actions .register-btn {
+.Buttons_regist .register-btn {
     background-color: #4CAF50; /* 緑 */
     color: white;
     border: none;
     margin-bottom: 5px;
 }
-.registration-actions .clear-btn {
+.Buttons_regist .clear-btn {
     background-color: #888; /* グレー */
     color: white;
     border: none;
@@ -123,7 +117,7 @@
     margin-bottom: 10px;
     font-weight: bold;
 }
-#auth-button {
+#auth-btn { /* 変更 */
     padding: 8px 15px;
     background-color: #4285F4; /* Google Blue */
     color: white;
@@ -137,11 +131,8 @@
 /* 各ステータスセル内の要素の配置 */
 /* 修正: flexboxを削除し、要素をブロックレベルで縦並びにする */
 .stat-cell-container {
-    /* display: flex; を削除 */
-    /* flex-direction: column; を削除 */
     align-items: center; /* 引き続き中央揃えは維持 */
     justify-content: center;
-    /* gap: 2px; を削除 */
 }
 
 .stat-grade {
@@ -159,7 +150,7 @@
 }
 
 /* ログイン中の入力欄のスタイル */
-.player-table-container td .stat-input {
+.table_player td .stat-input {
     width: 60px; /* 入力欄の幅 */
     text-align: center;
     font-size: 20px; /* 入力欄のフォントサイズを数値に合わせる */
@@ -188,35 +179,3 @@
 .grade-throwing-B { color: #1499db; }
 .grade-throwing-A { color: #1499db; }
 .grade-throwing-S { color: #dbba14; }
-
-
-/* CSSは前回からほぼ変更なし */
-/* ... 省略 ... */
-
-#auth-status {
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-#auth-btn { /* 変更 */
-    padding: 8px 15px;
-    background-color: #4285F4; /* Google Blue */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 15px;
-}
-
-/* ... 省略 ... */
-
-/* 登録行のスタイル */
-#reg-row { /* 変更 */
-    background-color: #e6ffe6; /* 登録行の背景色 */
-    display: none; /* 初期状態では非表示 */
-}
-#reg-row input, /* 変更 */
-#reg-row textarea { /* 変更 */
-    background-color: #fff; /* 登録行の入力フィールドの背景色 */
-}
-/* ... 省略 ... */

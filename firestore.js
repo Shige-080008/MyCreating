@@ -3,11 +3,11 @@ import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, order
 // UI関連の関数をインポート（データ変更時にUIを更新するため）
 import { updatePlayerListUI, getUIElements } from './ui.js';
 // 認証関連の変数をインポート（登録・更新・削除時にユーザーIDを使用するため）
-import { currentUser } from './auth.js'; // currentLoggedInUser を currentUser に変更
+import { currentUser } from './auth.js';
 
 let db;
-let unsubscribePlayers = null; // unsubscribeFromPlayers を unsubscribePlayers に短縮
-let playerListTbody;           // playerListTableBody を playerListTbody に短縮
+let unsubscribePlayers = null;
+let playerListTbody;
 
 /**
  * Firestore機能を初期化する関数
@@ -16,7 +16,7 @@ let playerListTbody;           // playerListTableBody を playerListTbody に短
 export function initFirestore(firestoreDb) {
     db = firestoreDb;
     const elements = getUIElements();
-    playerListTbody = elements.playerListTbody; // playerListTableBody を playerListTbody に変更
+    playerListTbody = elements.playerListTbody;
 
     // アプリケーション起動時にリアルタイム監視を開始
     startListeningToPlayers();
@@ -25,19 +25,21 @@ export function initFirestore(firestoreDb) {
 /**
  * Firestoreに新しい選手データを追加する関数
  * @param {object} playerData - 追加する選手データ
+ * @param {string} playerName - 追加する選手の名前
  */
-export async function addPlayer(playerData) {
-    if (!currentUser) { // currentLoggedInUser を currentUser に変更
+export async function addPlayer(playerData, playerName) {
+    if (!currentUser) {
         alert('選手を登録するにはログインが必要です。');
         return;
     }
     try {
         const docRef = await addDoc(collection(db, "players"), {
             ...playerData,
-            memo: playerData.memo || '', // memoフィールドを追加、もし値がなければ空文字列
-            registeredBy: currentUser.uid // 登録ユーザーIDを追加 // currentLoggedInUser を currentUser に変更
+            memo: playerData.memo || '',
+            registeredBy: currentUser.uid
         });
-        alert(`〇選手を登録しました ID：${docRef.id}`);
+        // 選手名を使用するように変更
+        alert(`〇選手「${playerName}」を登録しました`);
     } catch (e) {
         alert(`✖選手の登録に失敗しました。詳細: ${e.message}`);
     }
@@ -47,9 +49,10 @@ export async function addPlayer(playerData) {
  * Firestoreの選手データを更新する関数
  * @param {string} id - 更新する選手のドキュメントID
  * @param {object} playerData - 更新する選手データ
+ * @param {string} playerName - 更新する選手の名前
  */
-export async function updatePlayer(id, playerData) {
-    if (!currentUser) { // currentLoggedInUser を currentUser に変更
+export async function updatePlayer(id, playerData, playerName) {
+    if (!currentUser) {
         alert('選手を更新するにはログインが必要です。');
         return;
     }
@@ -57,7 +60,8 @@ export async function updatePlayer(id, playerData) {
         const playerRef = doc(db, "players", id);
         // playerDataには、ステータスとmemoが含まれる可能性がある
         await updateDoc(playerRef, playerData);
-        alert(`選手を更新しました ID：${id}`);
+        // 選手名を使用するように変更
+        alert(`選手「${playerName}」を更新しました`);
     } catch (e) {
         console.error(`選手更新エラー：${e}`);
         alert(`選手の更新に失敗しました。（詳細：${e.message}）`);
@@ -67,16 +71,18 @@ export async function updatePlayer(id, playerData) {
 /**
  * Firestoreから選手データを削除する関数
  * @param {string} id - 削除する選手のドキュメントID
+ * @param {string} playerName - 削除する選手の名前
  */
-export async function deletePlayer(id) {
-    if (!currentUser) { // currentLoggedInUser を currentUser に変更
+export async function deletePlayer(id, playerName) {
+    if (!currentUser) {
         alert('選手を削除するにはログインが必要です。');
         return;
     }
-    if (confirm('本当にこの選手を削除しますか？')) {
+    if (confirm(`本当に選手「${playerName}」を削除しますか？`)) { // 確認メッセージに選手名を追加
         try {
             await deleteDoc(doc(db, "players", id));
-            console.log(`選手を削除しました。（ID：${id}）`);
+            // 選手名を使用するように変更
+            console.log(`選手「${playerName}」を削除しました。`);
         } catch (e) {
             console.error(`選手削除エラー：${e}`);
             alert(`選手の削除に失敗しました。（詳細：${e.message}）`);
@@ -90,15 +96,15 @@ export async function deletePlayer(id) {
 export function startListeningToPlayers() {
     if (!db) {
         console.error("Firestore database (db) is not initialized.");
-        if (playerListTbody) { // playerListTableBody を playerListTbody に変更
-             playerListTbody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>'; // colSpanを12に変更 // playerListTableBody を playerListTbody に変更
+        if (playerListTbody) {
+             playerListTbody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>';
         }
         return;
     }
 
     // 以前のリスナーがあれば解除
-    if (unsubscribePlayers) { // unsubscribeFromPlayers を unsubscribePlayers に変更
-        unsubscribePlayers(); // unsubscribeFromPlayers を unsubscribePlayers に変更
+    if (unsubscribePlayers) {
+        unsubscribePlayers();
     }
 
     // クエリを作成 (入学年でソート)
@@ -106,7 +112,7 @@ export function startListeningToPlayers() {
     const q = query(playersCollection, orderBy("enrollmentYear"));
 
     // リアルタイムリスナーを開始
-    unsubscribePlayers = onSnapshot(q, (querySnapshot) => { // unsubscribeFromPlayers を unsubscribePlayers に変更
+    unsubscribePlayers = onSnapshot(q, (querySnapshot) => {
         const playersData = [];
         querySnapshot.forEach((doc) => {
             playersData.push({ id: doc.id, ...doc.data() });
@@ -117,16 +123,16 @@ export function startListeningToPlayers() {
     }, (error) => {
         console.error("データの読み込みエラー (onSnapshot):", error);
         // エラー時でも登録行は表示されるようにするため、<tbody>の内容を直接操作しない
-        if (playerListTbody) { // playerListTableBody を playerListTbody に変更
+        if (playerListTbody) {
             // エラーメッセージを表示するが、既存の登録行は残す
-            const errorRow = playerListTbody.querySelector('.error-message-row'); // playerListTableBody を playerListTbody に変更
+            const errorRow = playerListTbody.querySelector('.error-message-row');
             if (errorRow) {
-                errorRow.remove(); // 既存のエラーメッセージがあれば削除
+                errorRow.remove();
             }
-            const newErrorRow = playerListTbody.insertRow(0); // テーブルの先頭に挿入 // playerListTableBody を playerListTbody に変更
+            const newErrorRow = playerListTbody.insertRow(0);
             newErrorRow.classList.add('error-message-row');
             const cell = newErrorRow.insertCell();
-            cell.colSpan = 12; // colSpanを12に変更
+            cell.colSpan = 12;
             cell.textContent = `データの読み込みに失敗しました。詳細: ${error.message}`;
             cell.style.color = 'red';
         }
