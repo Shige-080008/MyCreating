@@ -1,6 +1,6 @@
 .list-player table {
     border-collapse: collapse;
-    width: 100%; /* テーブルの幅を調整 */
+    width: auto; /* テーブルの幅を調整 */
 }
 .list-player th,
 .list-player td {
@@ -205,3 +205,13 @@ input[type="number"]::-webkit-inner-spin-button {
 #regist-row .input-set input[type="number"] {
     width: 60px; /* Keep original width for registration input */
 }
+
+.grade-width{ min-width: 112px; }
+
+.name-width { min-width: 117px; }
+
+.memo-width { min-width: 247px; }
+
+.state-width{ min-width: 117px; }
+
+.button-width { min-width: 127px; }

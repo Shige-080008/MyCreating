@@ -38,7 +38,7 @@ export async function addPlayer(playerData, playerName) {
         const docRef = await addDoc(collection(db, "players"), {
             ...playerData,
             memo: playerData.memo || '',
-            registeredBy: currentUser.uid
+            // registeredBy フィールドは作成しない
         });
         // 選手名を使用するように変更
         alert(`〇選手「${playerName}」を登録しました`);
