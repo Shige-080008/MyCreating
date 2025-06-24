@@ -1,3 +1,5 @@
+// firestore.js
+
 // Firebase Firestoreの関数をインポート
 import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 // UI関連の関数をインポート（データ変更時にUIを更新するため）
@@ -7,7 +9,7 @@ import { currentUser } from './auth.js';
 
 let db;
 let unsubscribePlayers = null;
-let playerListTbody;
+let playerListBody;
 
 /**
  * Firestore機能を初期化する関数
@@ -16,7 +18,7 @@ let playerListTbody;
 export function initFirestore(firestoreDb) {
     db = firestoreDb;
     const elements = getUIElements();
-    playerListTbody = elements.playerListTbody;
+    playerListBody = elements.playerListBody;
 
     // アプリケーション起動時にリアルタイム監視を開始
     startListeningToPlayers();
@@ -96,8 +98,8 @@ export async function deletePlayer(id, playerName) {
 export function startListeningToPlayers() {
     if (!db) {
         console.error("Firestore database (db) is not initialized.");
-        if (playerListTbody) {
-             playerListTbody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>';
+        if (playerListBody) {
+             playerListBody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>';
         }
         return;
     }
@@ -123,13 +125,13 @@ export function startListeningToPlayers() {
     }, (error) => {
         console.error("データの読み込みエラー (onSnapshot):", error);
         // エラー時でも登録行は表示されるようにするため、<tbody>の内容を直接操作しない
-        if (playerListTbody) {
+        if (playerListBody) {
             // エラーメッセージを表示するが、既存の登録行は残す
-            const errorRow = playerListTbody.querySelector('.error-message-row');
+            const errorRow = playerListBody.querySelector('.error-message-row');
             if (errorRow) {
                 errorRow.remove();
             }
-            const newErrorRow = playerListTbody.insertRow(0);
+            const newErrorRow = playerListBody.insertRow(0);
             newErrorRow.classList.add('error-message-row');
             const cell = newErrorRow.insertCell();
             cell.colSpan = 12;

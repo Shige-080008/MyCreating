@@ -9,14 +9,14 @@
 <body>
     <h1>栄冠ナイン 選手データ管理</h1>
 
-    <button id="auth-btn">Googleでログイン</button>
-    <div id="auth-status"></div>
+    <button id="auth-button">Googleでログイン</button>
+    <div id="auth-state"></div>
 
     <hr>
 
     <h2>登録選手一覧</h2>
-    <div class="table_player">
-        <table id="player-list-table">
+    <div class="list-player">
+        <table id="table-player">
             <thead>
                 <tr>
                     <th>学年</th>
@@ -34,27 +34,79 @@
                 </tr>
             </thead>
             <tbody>
-                <tr id="regist_row">
+                <tr id="regist-row">
                     <td>
-                        <div class="player-info-cell">
-                            <p class="player-grade">新規登録</p>
-                            <p class="enrollment-year">入学年:</p>
-                            <input type="number" id="regist_year" required min="1932" max="2500" placeholder="-">
+                        <div class="grade-cell">
+                            <p class="data-grade">新規登録</p>
+                            <p class="data-year">入学年:</p>
+                            <div class="input-set">
+                                <button type="button" class="decrease-btn">-</button>
+                                <input type="number" id="reginput-year" required min="1932" max="2500" placeholder="-">
+                                <button type="button" class="increase-btn">+</button>
+                            </div>
                         </div>
                     </td>
-                    <td><input type="text" id="regist_name" required minlength="1" maxlength="10" placeholder="-"></td>
-                    <td><input type="number" id="regist_throw" min="0" max="7"  placeholder="-" required></td>
-                    <td><input type="number" id="regist_dandou" min="1" max="4" placeholder="-" required></td>
-                    <td><input type="number" id="regist_meet" min="1" max="100" placeholder="-" required></td>
-                    <td><input type="number" id="regist_power" min="1" max="100" placeholder="-" required></td>
-                    <td><input type="number" id="regist_speed" min="1" max="100" placeholder="-" required></td>
-                    <td><input type="number" id="regist_arm" min="1" max="100" placeholder="-" required></td>
-                    <td><input type="number" id="regist_defense" min="1" max="100" placeholder="-" required></td>
-                    <td><input type="number" id="regist_catch" min="1" max="100" placeholder="-" required></td>
-                    <td><textarea id="regist_memo" maxlength="200" placeholder="メモを入力（最大200字）"></textarea></td>
+                    <td><input type="text" id="reginput-name" required minlength="1" maxlength="10" placeholder="-"></td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-throw" min="0" max="7"  placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-dandou" min="1" max="4" placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-meet" min="1" max="100" placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-power" min="1" max="100" placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-speed" min="1" max="100" placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-arm" min="1" max="100" placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-defense" min="1" max="100" placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-set">
+                            <button type="button" class="decrease-btn">-</button>
+                            <input type="number" id="reginput-catch" min="1" max="100" placeholder="-" required>
+                            <button type="button" class="increase-btn">+</button>
+                        </div>
+                    </td>
+                    <td><textarea id="reginput-memo" maxlength="200" placeholder="メモを入力（最大200字）"></textarea></td>
                     <td class="Buttons_regist">
-                        <button class="register-btn" id="regist_btn">登録</button>
-                        <button class="clear-btn" id="clear-btn">クリア</button>
+                        <button class="register-btn" id="reg-button">登録</button>
+                        <button class="clear-btn" id="clear-button">クリア</button>
                     </td>
                 </tr>
             </tbody>

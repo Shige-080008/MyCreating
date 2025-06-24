@@ -14,9 +14,9 @@ let signOutFn;
 let onAuthChangedFn;
 export let currentUser = null;
 
-let authBtn;
-let authStatusEl;
-let regRowEl;
+let authButton;
+let authStatusDisplay;
+let registrationRow;
 
 /**
  * ログイン/ログアウトボタンがクリックされた時の処理
@@ -70,12 +70,12 @@ export function initAuth(firebaseAuth, provider, signInPopupFunc, signOutFunc, o
 
     // UI要素の取得
     const elements = getUIElements();
-    authBtn = elements.authBtn;
-    authStatusEl = elements.authStatusEl;
-    regRowEl = elements.regRowEl;
+    authButton = elements.authButton;
+    authStatusDisplay = elements.authStatusDisplay;
+    registrationRow = elements.registrationRow;
 
     // ログイン/ログアウトボタンのイベントリスナーを設定
-    authBtn.addEventListener('click', handleAuthClick);
+    authButton.addEventListener('click', handleAuthClick);
 
     // 認証状態の監視を開始
     setupAuthStateObserver();
@@ -89,13 +89,13 @@ function setupAuthStateObserver() {
         currentUser = user;
 
         if (user) {
-            authStatusEl.textContent = `ログイン中 (${user.email})`;
-            authBtn.textContent = 'ログアウト';
-            regRowEl.style.display = 'table-row';
+            authStatusDisplay.textContent = `ログイン中 (${user.email})`;
+            authButton.textContent = 'ログアウト';
+            registrationRow.style.display = 'table-row';
         } else {
-            authStatusEl.textContent = '未ログイン';
-            authBtn.textContent = 'Googleでログイン';
-            regRowEl.style.display = 'none';
+            authStatusDisplay.textContent = '未ログイン';
+            authButton.textContent = 'Googleでログイン';
+            registrationRow.style.display = 'none';
             clearRegForm();
         }
         // ログイン状態が変わったら、選手リストの表示を更新
