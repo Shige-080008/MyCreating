@@ -1,24 +1,24 @@
 // firestore.js
 
-// Firebase Firestoreの関数をインポート
-import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+// Firebase Firestoreの必要な関数をインポート
+import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 // UI関連の関数をインポート（データ変更時にUIを更新するため）
 import { updatePlayerListUI, getUIElements } from './ui.js';
 // 認証関連の変数をインポート（登録・更新・削除時にユーザーIDを使用するため）
 import { currentUser } from './auth.js';
 
-let db;
-let unsubscribePlayers = null;
-let playerListBody;
+let db; // Firestoreデータベースインスタンスを保持する変数
+let unsubscribePlayers = null; // リアルタイムリスナーの解除関数を保持する変数
+let playerListBody; // 選手リストの<tbody>要素を保持する変数
 
 /**
  * Firestore機能を初期化する関数
  * @param {object} firestoreDb - Firestoreデータベースオブジェクト
  */
 export function initFirestore(firestoreDb) {
-    db = firestoreDb;
-    const elements = getUIElements();
-    playerListBody = elements.playerListBody;
+    db = firestoreDb; // データベースインスタンスをセット
+    const elements = getUIElements(); // UI要素を取得
+    playerListBody = elements.playerListBody; // 選手リストの<tbody>要素を取得
 
     // アプリケーション起動時にリアルタイム監視を開始
     startListeningToPlayers();
@@ -27,23 +27,29 @@ export function initFirestore(firestoreDb) {
 /**
  * Firestoreに新しい選手データを追加する関数
  * @param {object} playerData - 追加する選手データ
- * @param {string} playerName - 追加する選手の名前
+ * @param {string} playerName - 追加する選手の名前 (アラートメッセージ用)
  */
 export async function addPlayer(playerData, playerName) {
+    // ログインしていない場合は処理を中断
     if (!currentUser) {
         alert('選手を登録するにはログインが必要です。');
         return;
     }
     try {
-        const docRef = await addDoc(collection(db, "players"), {
-            ...playerData,
-            memo: playerData.memo || '',
-            // registeredBy フィールドは作成しない
+        // ドキュメント名を「入学年_名前」で生成
+        const documentName = `${playerData.enrollmentYear}_${playerName}`;
+        // ドキュメントへの参照を作成（明示的にドキュメントIDを指定）
+        const playerRef = doc(db, "players", documentName);
+
+        // setDoc を使用してドキュメントを登録または上書き
+        await setDoc(playerRef, {
+            ...playerData, // 受け取った選手データを展開
+            memo: playerData.memo || '', // メモがなければ空文字列
+            positions: playerData.positions || [], // 守備位置がなければ空の配列
         });
-        // 選手名を使用するように変更
-        alert(`〇選手「${playerName}」を登録しました`);
+        alert(`〇選手「${playerName}」を登録しました`); // 成功メッセージ
     } catch (e) {
-        alert(`✖選手の登録に失敗しました。詳細: ${e.message}`);
+        alert(`✖選手の登録に失敗しました。詳細: ${e.message}`); // 失敗メッセージ
     }
 }
 
@@ -51,43 +57,46 @@ export async function addPlayer(playerData, playerName) {
  * Firestoreの選手データを更新する関数
  * @param {string} id - 更新する選手のドキュメントID
  * @param {object} playerData - 更新する選手データ
- * @param {string} playerName - 更新する選手の名前
+ * @param {string} playerName - 更新する選手の名前 (アラートメッセージ用)
  */
 export async function updatePlayer(id, playerData, playerName) {
+    // ログインしていない場合は処理を中断
     if (!currentUser) {
         alert('選手を更新するにはログインが必要です。');
         return;
     }
     try {
+        // 更新するドキュメントへの参照を作成
         const playerRef = doc(db, "players", id);
-        // playerDataには、ステータスとmemoが含まれる可能性がある
+        // updateDoc を使用してドキュメントを更新
         await updateDoc(playerRef, playerData);
-        // 選手名を使用するように変更
-        alert(`選手「${playerName}」を更新しました`);
+        alert(`選手「${playerName}」を更新しました`); // 成功メッセージ
     } catch (e) {
-        console.error(`選手更新エラー：${e}`);
-        alert(`選手の更新に失敗しました。（詳細：${e.message}）`);
+        console.error(`選手更新エラー：${e}`); // エラーをコンソールに出力
+        alert(`選手の更新に失敗しました。（詳細：${e.message}）`); // 失敗メッセージ
     }
 }
 
 /**
  * Firestoreから選手データを削除する関数
  * @param {string} id - 削除する選手のドキュメントID
- * @param {string} playerName - 削除する選手の名前
+ * @param {string} playerName - 削除する選手の名前 (確認メッセージ用)
  */
 export async function deletePlayer(id, playerName) {
+    // ログインしていない場合は処理を中断
     if (!currentUser) {
         alert('選手を削除するにはログインが必要です。');
         return;
     }
-    if (confirm(`本当に選手「${playerName}」を削除しますか？`)) { // 確認メッセージに選手名を追加
+    // 削除の確認メッセージ
+    if (confirm(`本当に選手「${playerName}」を削除しますか？`)) {
         try {
+            // deleteDoc を使用してドキュメントを削除
             await deleteDoc(doc(db, "players", id));
-            // 選手名を使用するように変更
-            console.log(`選手「${playerName}」を削除しました。`);
+            console.log(`選手「${playerName}」を削除しました。`); // 成功メッセージをコンソールに出力
         } catch (e) {
-            console.error(`選手削除エラー：${e}`);
-            alert(`選手の削除に失敗しました。（詳細：${e.message}）`);
+            console.error(`選手削除エラー：${e}`); // エラーをコンソールに出力
+            alert(`選手の削除に失敗しました。（詳細：${e.message}）`); // 失敗メッセージ
         }
     }
 }
@@ -96,47 +105,52 @@ export async function deletePlayer(id, playerName) {
  * Firestoreの選手データをリアルタイムで監視し、UIを更新する関数
  */
 export function startListeningToPlayers() {
+    // dbが初期化されていない場合はエラーを出力し、処理を中断
     if (!db) {
         console.error("Firestore database (db) is not initialized.");
         if (playerListBody) {
-             playerListBody.innerHTML = '<tr><td colspan="12">初期化中...</td></tr>';
+             playerListBody.innerHTML = '<tr><td colspan="13">初期化中...</td></tr>'; // 初期化中のメッセージを表示
         }
         return;
     }
 
-    // 以前のリスナーがあれば解除
+    // 以前のリスナーがあれば解除し、重複監視を防ぐ
     if (unsubscribePlayers) {
         unsubscribePlayers();
     }
 
-    // クエリを作成 (入学年でソート)
+    // "players"コレクションへの参照を作成
     const playersCollection = collection(db, "players");
+    // 入学年でソートするクエリを作成
     const q = query(playersCollection, orderBy("enrollmentYear"));
 
-    // リアルタイムリスナーを開始
+    // リアルタイムリスナーを開始 (onSnapshot)
     unsubscribePlayers = onSnapshot(q, (querySnapshot) => {
-        const playersData = [];
+        const playersData = []; // 選手データを格納する配列
+        // 各ドキュメントをループしてデータを取得
         querySnapshot.forEach((doc) => {
-            playersData.push({ id: doc.id, ...doc.data() });
+            playersData.push({ id: doc.id, ...doc.data() }); // ドキュメントIDとデータを配列に追加
         });
 
-        // データが取得されたらUIを更新
+        // 取得したデータでUIを更新
         updatePlayerListUI(playersData);
     }, (error) => {
+        // データ読み込みエラー時の処理
         console.error("データの読み込みエラー (onSnapshot):", error);
-        // エラー時でも登録行は表示されるようにするため、<tbody>の内容を直接操作しない
         if (playerListBody) {
-            // エラーメッセージを表示するが、既存の登録行は残す
+            // 既存のエラーメッセージがあれば削除
             const errorRow = playerListBody.querySelector('.error-message-row');
             if (errorRow) {
                 errorRow.remove();
             }
+            // 新しいエラーメッセージ行をテーブルの先頭に追加
             const newErrorRow = playerListBody.insertRow(0);
             newErrorRow.classList.add('error-message-row');
             const cell = newErrorRow.insertCell();
-            cell.colSpan = 12;
-            cell.textContent = `データの読み込みに失敗しました。詳細: ${error.message}`;
+            cell.colSpan = 13; // 全ての列を結合
+            cell.textContent = `データの読み込み中にエラーが発生しました: ${error.message}`;
             cell.style.color = 'red';
+            cell.style.textAlign = 'center';
         }
     });
 }

@@ -21,6 +21,7 @@
                 <tr>
                     <th class="grade-width">学年</th>
                     <th class="name-width">選手名</th>
+                    <th class="position-width">守備位置</th>
                     <th class="state-width">送球</th>
                     <th class="state-width">弾道</th>
                     <th class="state-width">ミート</th>
@@ -47,6 +48,38 @@
                         </div>
                     </td>
                     <td><input type="text" id="reginput-name" required minlength="1" maxlength="10" placeholder="-"></td>
+                    <td class="position-inputs">
+                        <select id="reginput-posi1" class="reginput-posi">
+                            <option value="">選択</option>
+                            <option value="投手">投手</option>
+                            <option value="捕手">捕手</option>
+                            <option value="一塁手">一塁手</option>
+                            <option value="二塁手">二塁手</option>
+                            <option value="三塁手">三塁手</option>
+                            <option value="遊撃手">遊撃手</option>
+                            <option value="外野手">外野手</option>
+                        </select>
+                        <select id="reginput-posi2" class="reginput-posi">
+                            <option value="">なし</option>
+                            <option value="投手">投手</option>
+                            <option value="捕手">捕手</option>
+                            <option value="一塁手">一塁手</option>
+                            <option value="二塁手">二塁手</option>
+                            <option value="三塁手">三塁手</option>
+                            <option value="遊撃手">遊撃手</option>
+                            <option value="外野手">外野手</option>
+                        </select>
+                        <select id="reginput-posi3" class="reginput-posi">
+                            <option value="">なし</option>
+                            <option value="投手">投手</option>
+                            <option value="捕手">捕手</option>
+                            <option value="一塁手">一塁手</option>
+                            <option value="二塁手">二塁手</option>
+                            <option value="三塁手">三塁手</option>
+                            <option value="遊撃手">遊撃手</option>
+                            <option value="外野手">外野手</option>
+                        </select>
+                    </td>
                     <td>
                         <div class="input-set">
                             <button type="button" class="decrease-btn">-</button>
@@ -137,17 +170,20 @@
 
         // Firebaseアプリの初期化
         const app = initializeApp(firebaseConfig);
+        // Firestoreインスタンスの取得
         const db = getFirestore(app);
+        // Authインスタンスの取得
         const auth = getAuth(app);
+        // Google認証プロバイダーのインスタンス作成
         const googleProvider = new GoogleAuthProvider();
 
-        // UI関連の初期化
+        // UI関連の初期化関数を呼び出し
         initUI();
 
-        // Firestore関連の初期化
+        // Firestore関連の初期化関数を呼び出し
         initFirestore(db);
 
-        // 認証関連の初期化
+        // 認証関連の初期化関数を呼び出し
         initAuth(auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged);
     </script>
 </body>
