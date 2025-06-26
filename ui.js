@@ -326,6 +326,16 @@ export function updatePlayerListUI(playersData = []) {
     // ソートされた選手データを元にテーブルの行を作成・更新
     playersGrade.forEach((player, index) => {
         const row = playerListBody.insertRow(index); // 新しい行を挿入
+        // 追加した新しい行に背景色を設定
+        if (player.positions[0] == '投手') {
+            row.classList.add('toushu-row'); // 行にクラスを追加
+        } else if (player.positions[0] == '捕手') {
+            row.classList.add('hosyu-row'); // 捕手の行にクラスを追加
+        } else if (player.positions[0] == '外野手') {
+            row.classList.add('gaiyasyu-row'); // 外野手の行にクラスを追加
+        } else {
+            row.classList.add('naiyasyu-row'); // 内野手の行にクラスを追加
+        }
         row.dataset.playerId = player.id; // 行に選手IDをデータ属性として保持
 
         // 学年と入学年セルの作成

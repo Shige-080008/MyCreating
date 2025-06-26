@@ -73,7 +73,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* 登録行のスタイル */
 #regist-row {
-    background-color: #e6ffe6; /* 背景色 */
+    background-color: #efefef; /* 背景色 */
     display: none; /* 初期状態では非表示 */
 }
 /* 登録行の入力フィールドのスタイル */
@@ -280,3 +280,9 @@ input[type="number"]::-webkit-inner-spin-button {
     border: 1px solid #ccc; /* ボーダー */
     border-radius: 3px; /* 角を丸く */
 }
+
+/* メイン守備位置の背景色 */
+.toushu-row { background-color: #ffdfdf; }
+.hosyu-row { background-color: #e0f7fa; }
+.naiyasyu-row { background-color: #fffacd; }
+.gaiyasyu-row { background-color: #e0ffc1; }
