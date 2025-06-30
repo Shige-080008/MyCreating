@@ -119,7 +119,7 @@ input[type="number"]::-webkit-inner-spin-button {
     border: none; /* ボーダーなし */
     margin-bottom: 5px; /* 下側の余白 */
 }
-/* 削除ボタンのスタイル */
+/* 卒業ボタンのスタイル */
 .action-buttons .delete-btn {
     background-color: #f44336; /* 赤 */
     color: white; /* 文字色 */
@@ -282,7 +282,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* メイン守備位置の背景色 */
-.toushu-row { background-color: #ffdfdf; }
-.hosyu-row { background-color: #e0f7fa; }
-.naiyasyu-row { background-color: #fffacd; }
-.gaiyasyu-row { background-color: #e0ffc1; }
+.toushu-row { background-color: #fff1f1; }
+.hosyu-row { background-color: #e7fcff; }
+.naiyasyu-row { background-color: #fffbd7; }
+.gaiyasyu-row { background-color: #efffdf; }

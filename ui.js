@@ -1,8 +1,8 @@
 // ui.js
 
-// Firebase Firestoreの登録・更新・削除関数をインポート
+// Firebase Firestoreの登録・更新・卒業関数をインポート
 import { addPlayer, updatePlayer, deletePlayer } from './firestore.js';
-// 認証のログイン状態をインポート（編集・削除ボタンの表示制御用）
+// 認証のログイン状態をインポート（編集・卒業ボタンの表示制御用）
 import { currentUser } from './auth.js';
 
 // HTML要素への参照を保持する変数群
@@ -267,15 +267,15 @@ function applyGradeColor(element, statType, grade) {
  * @param {Array} playersData - 表示する選手データの配列
  */
 export function updatePlayerListUI(playersData = []) {
-    // まず、既存の選手データ行をすべて削除
-    // 登録行は残すため、registRow以外のtr要素を削除
+    // まず、既存の選手データ行をすべて卒業
+    // 登録行は残すため、registRow以外のtr要素を卒業
     Array.from(playerListBody.children).forEach(child => {
         if (child.id !== 'regist-row') {
             child.remove();
         }
     });
 
-    // エラーメッセージがあれば削除
+    // エラーメッセージがあれば卒業
     const errorRow = playerListBody.querySelector('.error-message-row');
     if (errorRow) {
         errorRow.remove();
@@ -528,7 +528,7 @@ export function updatePlayerListUI(playersData = []) {
         const actionCell = row.insertCell();
         actionCell.classList.add('action-buttons');
 
-        // ログインしている場合のみ、更新・削除ボタンを表示
+        // ログインしている場合のみ、更新・卒業ボタンを表示
         if (currentUser) {
             const updateButton = document.createElement('button');
             updateButton.textContent = '更新';
@@ -562,11 +562,11 @@ export function updatePlayerListUI(playersData = []) {
             });
 
             const deleteButton = document.createElement('button');
-            deleteButton.textContent = '削除';
+            deleteButton.textContent = '卒業';
             deleteButton.classList.add('delete-btn');
             deleteButton.addEventListener('click', async () => {
-                // 削除関数に選手名を渡すように変更
-                await deletePlayer(player.id, player.name); // 削除関数を呼び出し
+                // 卒業関数に選手名を渡すように変更
+                await deletePlayer(player.id, player.name); // 卒業関数を呼び出し
             });
 
             actionCell.appendChild(updateButton);
@@ -577,6 +577,6 @@ export function updatePlayerListUI(playersData = []) {
     });
 
     // 最後に登録行を再度追加 (DOM操作で移動されるため、毎回明示的に最後にする)
-    // これにより、選手が追加・削除されても登録行が常に一番下になる
+    // これにより、選手が追加・卒業されても登録行が常に一番下になる
     playerListBody.appendChild(registRow);
 }

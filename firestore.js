@@ -4,7 +4,7 @@
 import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 // UI関連の関数をインポート（データ変更時にUIを更新するため）
 import { updatePlayerListUI, getUIElements } from './ui.js';
-// 認証関連の変数をインポート（登録・更新・削除時にユーザーIDを使用するため）
+// 認証関連の変数をインポート（登録・更新・卒業時にユーザーIDを使用するため）
 import { currentUser } from './auth.js';
 
 let db; // Firestoreデータベースインスタンスを保持する変数
@@ -78,25 +78,25 @@ export async function updatePlayer(id, playerData, playerName) {
 }
 
 /**
- * Firestoreから選手データを削除する関数
- * @param {string} id - 削除する選手のドキュメントID
- * @param {string} playerName - 削除する選手の名前 (確認メッセージ用)
+ * Firestoreから選手データを卒業させる関数
+ * @param {string} id - 卒業させる選手のドキュメントID
+ * @param {string} playerName - 卒業させる選手の名前 (確認メッセージ用)
  */
 export async function deletePlayer(id, playerName) {
     // ログインしていない場合は処理を中断
     if (!currentUser) {
-        alert('選手を削除するにはログインが必要です。');
+        alert('選手を卒業させるにはログインが必要です。');
         return;
     }
-    // 削除の確認メッセージ
-    if (confirm(`本当に選手「${playerName}」を削除しますか？`)) {
+    // 卒業の確認メッセージ
+    if (confirm(`本当に${playerName}選手を卒業させますか？`)) {
         try {
-            // deleteDoc を使用してドキュメントを削除
+            // deleteDoc を使用してドキュメントを卒業
             await deleteDoc(doc(db, "players", id));
-            console.log(`選手「${playerName}」を削除しました。`); // 成功メッセージをコンソールに出力
+            console.log(`選手「${playerName}」を卒業しました。`); // 成功メッセージをコンソールに出力
         } catch (e) {
-            console.error(`選手削除エラー：${e}`); // エラーをコンソールに出力
-            alert(`選手の削除に失敗しました。（詳細：${e.message}）`); // 失敗メッセージ
+            console.error(`選手卒業エラー：${e}`); // エラーをコンソールに出力
+            alert(`選手の卒業に失敗しました。（詳細：${e.message}）`); // 失敗メッセージ
         }
     }
 }
@@ -138,7 +138,7 @@ export function startListeningToPlayers() {
         // データ読み込みエラー時の処理
         console.error("データの読み込みエラー (onSnapshot):", error);
         if (playerListBody) {
-            // 既存のエラーメッセージがあれば削除
+            // 既存のエラーメッセージがあれば卒業
             const errorRow = playerListBody.querySelector('.error-message-row');
             if (errorRow) {
                 errorRow.remove();
