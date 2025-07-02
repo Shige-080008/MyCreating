@@ -40,6 +40,15 @@ const positionOrder = {
     '': 8, // 'なし' または空の選択
 };
 
+// 投手変化球の方向定義をグローバルスコープに移動
+const breakingBallDirections = [
+    { dir: 'left', symbol: '←' },
+    { dir: 'downLeft', symbol: '↙' },
+    { dir: 'down', symbol: '↓' },
+    { dir: 'downRight', symbol: '↘' },
+    { dir: 'right', symbol: '→' }
+];
+
 /**
  * UI要素を取得し、それらへの参照をグローバル変数に格納する関数
  * 他のモジュールからUI要素にアクセスできるように、オブジェクトとして返します
@@ -110,16 +119,16 @@ export function initUI() {
     // 新規登録フォームの数値入力フィールドの増減ボタンにイベントリスナーを追加
     document.querySelectorAll('#regist-row .input-set').forEach(container => {
         const input = container.querySelector('input[type="number"]');
-        const decrementBtn = container.querySelector('.decrease-btn');
-        const incrementBtn = container.querySelector('.increase-btn');
+        const decreBtn = container.querySelector('.decrease-btn');
+        const increBtn = container.querySelector('.increase-btn');
 
         // 減算ボタンがクリックされたら入力値を1減らす
-        decrementBtn.addEventListener('click', () => {
+        decreBtn.addEventListener('click', () => {
             input.stepDown(); // 値を1減らす
             input.dispatchEvent(new Event('input')); // inputイベントを手動で発火させる（これにより、関連する処理が実行される）
         });
         // 加算ボタンがクリックされたら入力値を1増やす
-        incrementBtn.addEventListener('click', () => {
+        increBtn.addEventListener('click', () => {
             input.stepUp(); // 値を1増やす
             input.dispatchEvent(new Event('input')); // inputイベントを手動で発火させる
         });
@@ -222,7 +231,7 @@ function convertStatToGrade(statType, value) {
         if (value >= 0 && value <= 7) {
             return grades[value];
         }
-    } else if (['meet', 'power', 'speed', 'armStrength', 'defense', 'catching'].includes(statType)) {
+    } else if (['meet', 'power', 'speed', 'armStrength', 'defense', 'catching', 'control', 'stamina', 'pitSpeed'].includes(statType)) {
         // ミート、パワーなどのステータス変換
         if (value >= 90) return 'S';
         if (value >= 80) return 'A';
@@ -249,17 +258,73 @@ function convertStatToGrade(statType, value) {
 function applyGradeColor(element, statType, grade) {
     // 既存のクラスを一度クリア
     element.classList.remove('grade-G', 'grade-F', 'grade-E', 'grade-D', 'grade-C', 'grade-B', 'grade-A', 'grade-S',
-                             'grade-throwing-G', 'grade-throwing-F', 'grade-throwing-E', 'grade-throwing-D',
-                             'grade-throwing-C', 'grade-throwing-B', 'grade-throwing-A', 'grade-throwing-S');
+         'grade-throwing-G', 'grade-throwing-F', 'grade-throwing-E', 'grade-throwing-D', 'grade-throwing-C', 'grade-throwing-B', 'grade-throwing-A', 'grade-throwing-S');
 
     // 特定のステータスに合わせたクラスを追加 (例: throwing-G)
     // それ以外のステータスは汎用的なクラス (例: grade-G)
     if (statType === 'throwing') {
         element.classList.add(`grade-${statType}-${grade}`);
-    } else if (['meet', 'power', 'speed', 'armStrength', 'defense', 'catching'].includes(statType)) {
+    } else if (['meet', 'power', 'speed', 'armStrength', 'defense', 'catching', 'control', 'stamina', 'pitSpeed'].includes(statType)) {
         element.classList.add(`grade-${grade}`);
     }
     element.classList.add('stat-grade'); // 基本のスタイルも追加
+}
+
+/**
+ * 投手ステータス表示用のHTMLを生成するヘルパー関数
+ * @param {object} player - 選手データオブジェクト
+ * @returns {string} 投手ステータス表示用のHTML文字列
+ */
+function createPitcherStatsRowHtml(player) {
+    const pitSpeed = player.pitSpeed || ''; // pitSpeed を使用
+    const control = player.control || '';
+    const stamina = player.stamina || '';
+    const BallHenka1 = player.BallHenka1 || {};
+    const BallHenka2 = player.BallHenka2 || { type: '', value: '' };
+
+    const controlGrade = convertStatToGrade('control', control);
+    const staminaGrade = convertStatToGrade('stamina', stamina);
+    const pitSpeedGrade = convertStatToGrade('pitSpeed', pitSpeed);
+
+    // 第二変化量のオプションを生成
+    const secondBreakingBallOptions = `
+        <option value="">なし</option>
+        ${breakingBallDirections.map(b => `<option value="${b.dir}" ${BallHenka2.type === b.dir ? 'selected' : ''}>${b.symbol}</option>`).join('')}
+    `;
+
+    return `
+        <strong>${player.name}の投手能力</strong>
+        <div class="pitcher-container">
+            <div class="pit-stat1">
+                <div>
+                    <label>球速:</label>
+                    <input type="number" min="100" max="180" value="${pitSpeed}" data-field="pitSpeed"> km/h
+                </div>
+                <div>
+                    <label>コントロール:</label>
+                    <input type="number" min="1" max="100" value="${control}" data-field="control"> <span class="grade-display grade-${controlGrade}">${controlGrade}</span>
+                </div>
+                <div>
+                    <label>スタミナ:</label><input type="number" min="1" max="100" value="${stamina}" data-field="stamina"> <span class="grade-display grade-${staminaGrade}">${staminaGrade}</span>
+                </div>
+            </div>
+            <div class="pit-stat2">
+                <div class="ball-group">
+                    <label>変化量:</label>
+                    ${breakingBallDirections.map(b => `
+                        <span>${b.symbol}</span><input type="number" min="0" max="7" value="${BallHenka1[b.dir] || ''}" data-field="BallHenka1_${b.dir}">
+                    `).join('')}
+                </div>
+                <div class="breaking-ball2-group">
+                    <label>第二変化量:</label>
+                    <select data-field="BallHenka2_type">
+                        ${secondBreakingBallOptions}
+                    </select>
+                    <input type="number" min="0" max="7" value="${BallHenka2.value || ''}" data-field="BallHenka2_value" class="breaking-ball2-value">
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 /**
@@ -267,15 +332,15 @@ function applyGradeColor(element, statType, grade) {
  * @param {Array} playersData - 表示する選手データの配列
  */
 export function updatePlayerListUI(playersData = []) {
-    // まず、既存の選手データ行をすべて卒業
-    // 登録行は残すため、registRow以外のtr要素を卒業
+    // まず、既存の選手データ行をすべて削除
+    // 登録行は残すため、registRow以外のtr要素を削除
     Array.from(playerListBody.children).forEach(child => {
         if (child.id !== 'regist-row') {
             child.remove();
         }
     });
 
-    // エラーメッセージがあれば卒業
+    // エラーメッセージがあれば削除
     const errorRow = playerListBody.querySelector('.error-message-row');
     if (errorRow) {
         errorRow.remove();
@@ -283,11 +348,14 @@ export function updatePlayerListUI(playersData = []) {
 
     // 選手データがない場合のメッセージ表示
     if (playersData.length === 0) {
-        const noPlayerRow = playerListBody.insertRow(0); // テーブルの先頭に新しい行を挿入
+        const noPlayerRow = document.createElement('tr'); // 新しい行を作成
         const cell = noPlayerRow.insertCell(); // セルを挿入
         cell.colSpan = 13; // 全ての列を結合
         cell.textContent = 'まだ選手がいません。'; // メッセージを設定
-        noPlayerRow.classList.add('no-player-message'); // クラスを追加
+        noPlayerRow.classList.add('no-player'); // クラスを追加
+        playerListBody.appendChild(noPlayerRow); // テーブルボディに追加
+        playerListBody.appendChild(registRow); // 登録行を最後に追加
+        return; // 選手がいない場合はここで処理を終了
     }
 
     // 全ての選手データから最も新しい入学年を取得
@@ -323,20 +391,24 @@ export function updatePlayerListUI(playersData = []) {
         return a.name.localeCompare(b.name);
     });
 
+    // ここから変更されたロジック
+    const rowsToAppend = []; // ここに選手とピッチャー能力の行を順番に貯めていくよ
+
     // ソートされた選手データを元にテーブルの行を作成・更新
     playersGrade.forEach((player, index) => {
-        const row = playerListBody.insertRow(index); // 新しい行を挿入
-        // 追加した新しい行に背景色を設定
+        const row = document.createElement('tr'); // 新しい選手の行を作るよ
+
+        // ... (既存のコード: クラスの追加、dataset.playerIdの設定、セルの作成と内容の追加)
         if (player.positions[0] == '投手') {
-            row.classList.add('toushu-row'); // 行にクラスを追加
+            row.classList.add('toushu-row');
         } else if (player.positions[0] == '捕手') {
-            row.classList.add('hosyu-row'); // 捕手の行にクラスを追加
+            row.classList.add('hosyu-row');
         } else if (player.positions[0] == '外野手') {
-            row.classList.add('gaiyasyu-row'); // 外野手の行にクラスを追加
+            row.classList.add('gaiyasyu-row');
         } else {
-            row.classList.add('naiyasyu-row'); // 内野手の行にクラスを追加
+            row.classList.add('naiyasyu-row');
         }
-        row.dataset.playerId = player.id; // 行に選手IDをデータ属性として保持
+        row.dataset.playerId = player.id;
 
         // 学年と入学年セルの作成
         const playerInfoCell = row.insertCell();
@@ -344,7 +416,6 @@ export function updatePlayerListUI(playersData = []) {
         const gradeP = document.createElement('p');
         gradeP.classList.add('data-grade');
         gradeP.textContent = `${player.calculatedGrade}年生`;
-
         const enrollmentYearP = document.createElement('p');
         enrollmentYearP.classList.add('data-year');
         enrollmentYearP.textContent = `(入学${player.enrollmentYear}年)`;
@@ -364,200 +435,258 @@ export function updatePlayerListUI(playersData = []) {
             const positionsContainer = document.createElement('div');
             positionsContainer.classList.add('position-edit');
 
-            const allPositions = ["投手", "捕手", "一塁手", "二塁手", "三塁手", "遊撃手", "外野手"];
+            // メインポジション
+            const Select_mainPosi = document.createElement('select');
+            Select_mainPosi.classList.add('input-position');
+            Select_mainPosi.dataset.playerId = player.id;
+            Select_mainPosi.dataset.field = 'positions_0'; // 配列の0番目を編集
+            ['', '投手', '捕手', '一塁手', '二塁手', '三塁手', '遊撃手', '外野手'].forEach(pos => {
+                const option = document.createElement('option');
+                option.value = pos;
+                option.textContent = pos === '' ? '選択' : pos;
+                if (player.positions[0] === pos) {
+                    option.selected = true;
+                }
+                Select_mainPosi.appendChild(option);
+            });
+            positionsContainer.appendChild(Select_mainPosi);
 
-            for (let i = 0; i < 3; i++) {
-                const select = document.createElement('select');
-                select.dataset.field = `position${i + 1}`; // データ属性にフィールド名を設定
-                select.dataset.playerId = player.id; // データ属性に選手IDを設定
-                select.classList.add('position-select-input');
+            // サブポジション1
+            const Select_subPosi1 = document.createElement('select');
+            Select_subPosi1.classList.add('input-position', 'select-subPosi');
+            Select_subPosi1.dataset.playerId = player.id;
+            Select_subPosi1.dataset.field = 'positions_1'; // 配列の1番目を編集
+            ['', '投手', '捕手', '一塁手', '二塁手', '三塁手', '遊撃手', '外野手'].forEach(pos => {
+                const option = document.createElement('option');
+                option.value = pos;
+                option.textContent = pos === '' ? 'なし' : pos;
+                if (player.positions[1] === pos) {
+                    option.selected = true;
+                }
+                Select_subPosi1.appendChild(option);
+            });
+            positionsContainer.appendChild(Select_subPosi1);
 
-                // 最初のオプション（"選択" または "なし"）を追加
-                const defaultOption = document.createElement('option');
-                defaultOption.value = "";
-                defaultOption.textContent = i === 0 ? "選択" : "なし";
-                select.appendChild(defaultOption);
-
-                // 全ての守備位置オプションを追加
-                allPositions.forEach(pos => {
+            // メイン守備位置が投手じゃなければ、サブポジション2を追加
+            // サブポジション2 (投手以外の選手のみ表示)
+            // サブポジション2は投手以外の選手にのみ表示
+            if (player.positions[0] !== '投手') {
+                const Select_subPosi2 = document.createElement('select');
+                Select_subPosi2.classList.add('input-position', 'select-subPosi');
+                Select_subPosi2.dataset.playerId = player.id;
+                Select_subPosi2.dataset.field = 'positions_2'; // 配列の2番目を編集
+                ['', '投手', '捕手', '一塁手', '二塁手', '三塁手', '遊撃手', '外野手'].forEach(pos => {
                     const option = document.createElement('option');
                     option.value = pos;
-                    option.textContent = pos;
-                    select.appendChild(option);
+                    option.textContent = pos === '' ? 'なし' : pos;
+                    if (player.positions[2] === pos) {
+                        option.selected = true;
+                    }
+                    Select_subPosi2.appendChild(option);
                 });
-
-                // 現在の守備位置を設定
-                if (player.positions && player.positions[i]) {
-                    select.value = player.positions[i];
-                } else {
-                    select.value = "";
-                }
-                positionsContainer.appendChild(select);
+                positionsContainer.appendChild(Select_subPosi2);
+            } else {
+                // 投手の場合は、サブポジション2の位置に、代わりに詳細ボタン<button class="detail-btn">詳細</button>を追加
+                const detailButton = document.createElement('button');
+                detailButton.textContent = '詳細';
+                detailButton.classList.add('detail-btn');
+                detailButton.addEventListener('click', () => {
+                const pitcherStatsRow = document.getElementById(`pitcher-stats-row-${player.id}`);
+                    if (pitcherStatsRow) {
+                        pitcherStatsRow.classList.toggle('hidden');
+                    }
+                });
+                positionsContainer.appendChild(detailButton);
             }
             positionCell.appendChild(positionsContainer);
         } else {
-            // 未ログイン時はテキスト表示
-            const positionDiv = document.createElement('div');
-            positionDiv.classList.add('position-display');
-            if (player.positions && player.positions.length > 0) {
-                // メインポジションとサブポジションを略称で表示
-                positionDiv.innerHTML = player.positions.map((pos, idx) => {
-                    if (idx === 0) return `<span class="main-position">${pos.charAt(0)}</span>`;
-                    return `<span class="sub-position">&nbsp;/ ${pos.charAt(0)}</span>`;
-                }).join('');
-            } else {
-                positionDiv.textContent = '-'; // 守備位置がない場合はハイフン
+            // 未ログインの場合、テキストで表示
+            const mainPosiTxt = document.createElement('span');
+            mainPosiTxt.classList.add('main-position');
+            mainPosiTxt.textContent = player.positions[0].substr(0,1);
+            positionCell.appendChild(mainPosiTxt);
+
+            if (player.positions.length > 1) {
+                const subPosiTxt = document.createElement('span');
+                subPosiTxt.classList.add('sub-position');
+                subPosiTxt.textContent = ` /${player.positions.slice(1).map(pos => pos.substr(0, 1)).join(', ')}`;
+                positionCell.appendChild(subPosiTxt);
             }
-            positionCell.appendChild(positionDiv);
         }
 
-        // 各ステータスをアルファベットランクと数値、またはinputタグとして描画
-        const stats = [
-            { key: 'throwing', min: 0, max: 7 },
-            { key: 'dandou', min: 1, max: 4 },
-            { key: 'meet', min: 1, max: 100 },
-            { key: 'power', min: 1, max: 100 },
-            { key: 'speed', min: 1, max: 100 },
-            { key: 'armStrength', min: 1, max: 100 },
-            { key: 'defense', min: 1, max: 100 },
-            { key: 'catching', min: 1, max: 100 }
+        // 各ステータスセルの作成と内容の追加 (送球、弾道、ミート、パワー、走力、肩力、守備力、捕球)
+        const statsToDisplay = [
+            { field: 'throwing', label: '送球', value: player.throwing },
+            { field: 'dandou', label: '弾道', value: player.dandou },
+            { field: 'meet', label: 'ミート', value: player.meet },
+            { field: 'power', label: 'パワー', value: player.power },
+            { field: 'speed', label: '走力', value: player.speed },
+            { field: 'armStrength', label: '肩力', value: player.armStrength },
+            { field: 'defense', label: '守備力', value: player.defense },
+            { field: 'catching', label: '捕球', value: player.catching }
         ];
 
-        stats.forEach(stat => {
+        statsToDisplay.forEach(stat => {
             const cell = row.insertCell();
-            cell.classList.add('state-cell'); // 親要素にクラスを追加
+            cell.classList.add('data-cell'); // スタイル用のクラスを追加
 
-            const gradeSpan = document.createElement('span'); // ランク表示用のspan
-            gradeSpan.classList.add('stat-grade');
-
-            const valueSpan = document.createElement('span'); // 数値表示用のspan
-            valueSpan.classList.add('stat-value');
-
-            // 初期表示のランクと数値を設定
-            const initialGradeValue = convertStatToGrade(stat.key, player[stat.key]);
-            gradeSpan.textContent = initialGradeValue;
-            valueSpan.textContent = player[stat.key]; // 数値のみを表示
-
-            // 弾道以外のランクに色を適用
-            if (stat.key !== 'dandou') {
-                applyGradeColor(gradeSpan, stat.key, initialGradeValue);
-            }
-
-            cell.appendChild(gradeSpan); // ランク表示を追加
-
-            // ログイン中の場合のみ、入力欄と増減ボタンを表示
             if (currentUser) {
-                const inputContainer = document.createElement('div');
-                inputContainer.classList.add('input-set');
 
-                const decrementBtn = document.createElement('button');
-                decrementBtn.type = 'button';
-                decrementBtn.classList.add('decrease-btn');
-                decrementBtn.textContent = '-';
-                inputContainer.appendChild(decrementBtn);
+                // アルファベットランク表示用のspan
+                const gradeSpan = document.createElement('span');
+                gradeSpan.classList.add('grade-display');
+                const grade = convertStatToGrade(stat.field, stat.value);
+                gradeSpan.textContent = grade;
+                applyGradeColor(gradeSpan, stat.field, grade);
+                cell.appendChild(gradeSpan);
+
+                // ログイン中の場合、編集可能な入力フィールドを表示
+                const inputContainer = document.createElement('div');
+                inputContainer.classList.add('input-set'); // 増減ボタン用のコンテナ
 
                 const input = document.createElement('input');
                 input.type = 'number';
-                input.value = player[stat.key];
-                input.min = stat.min;
-                input.max = stat.max;
-                input.dataset.field = stat.key; // データ属性にフィールド名を設定
-                input.dataset.playerId = player.id; // データ属性に選手IDを設定
-                input.classList.add('stat-input');
-                inputContainer.appendChild(input);
+                input.value = stat.value;
+                input.dataset.playerId = player.id;
+                input.dataset.field = stat.field;
+                input.classList.add('edit-input');
 
-                const incrementBtn = document.createElement('button');
-                incrementBtn.type = 'button';
-                incrementBtn.classList.add('increase-btn');
-                incrementBtn.textContent = '+';
-                inputContainer.appendChild(incrementBtn);
-
-                // inputの値が変更されたらランク表示を更新するイベントリスナー
-                input.addEventListener('input', (e) => {
-                    const newValue = parseInt(e.target.value);
-                    const newGrade = convertStatToGrade(stat.key, newValue);
-                    gradeSpan.textContent = newGrade;
-
-                    // 弾道以外のランクに色を再適用
-                    if (stat.key !== 'dandou') {
-                        applyGradeColor(gradeSpan, stat.key, newGrade);
-                    } else {
-                           gradeSpan.classList.add('stat-grade'); // 弾道も見た目は大きく
-                    }
-                });
-
-                // 既存の選手データの増減ボタンイベントリスナー
-                decrementBtn.addEventListener('click', () => {
+                // 増減ボタン
+                const decreBtn = document.createElement('button');
+                decreBtn.textContent = '-';
+                decreBtn.classList.add('decrease-btn');
+                decreBtn.addEventListener('click', () => {
                     input.stepDown();
-                    input.dispatchEvent(new Event('input')); // inputイベントを発火させてランク表示を更新
-                });
-                incrementBtn.addEventListener('click', () => {
-                    input.stepUp();
-                    input.dispatchEvent(new Event('input')); // inputイベントを発火させてランク表示を更新
+                    input.dispatchEvent(new Event('change')); // changeイベントを発火
                 });
 
-                cell.appendChild(inputContainer); // 入力フィールドとボタンのコンテナを追加
+                const increBtn = document.createElement('button');
+                increBtn.textContent = '+';
+                increBtn.classList.add('increase-btn');
+                increBtn.addEventListener('click', () => {
+                    input.stepUp();
+                    input.dispatchEvent(new Event('change')); // changeイベントを発火
+                });
+
+                inputContainer.appendChild(decreBtn);
+                inputContainer.appendChild(input);
+                inputContainer.appendChild(increBtn);
+                cell.appendChild(inputContainer);
+
+                let inputTypingTimer;
+                input.addEventListener('change', async (e) => {
+                    clearTimeout(inputTypingTimer);
+                    inputTypingTimer = setTimeout( async() => {
+                        // 入力値を整数に変換
+                        const updatedValue = parseInt(e.target.value);
+                        const playerId = e.target.dataset.playerId;
+                        const field = e.target.dataset.field;
+                        // Firestoreを更新
+                        const updatedData = { [field]: updatedValue };
+                        await updatePlayer(playerId, updatedData, player.name); // 更新処理に選手名を渡すように変更
+                        // ランク表示も即座に更新
+                        const newGrade = convertStatToGrade(field, updatedValue);
+                        gradeSpan.textContent = newGrade;
+                        applyGradeColor(gradeSpan, field, newGrade);
+                    }, 3000); // 3秒入力がなければ更新
+                });
             } else {
-                // 未ログイン時は数値spanを表示
+                // 未ログインの場合、テキストとランクを表示
+                const gradeSpan = document.createElement('span');
+                gradeSpan.classList.add('grade-display');
+                const grade = convertStatToGrade(stat.field, stat.value);
+                gradeSpan.textContent = grade;
+                applyGradeColor(gradeSpan, stat.field, grade);
+                cell.appendChild(gradeSpan);
+
+                const valueSpan = document.createElement('span');
+                valueSpan.textContent = stat.value;
                 cell.appendChild(valueSpan);
             }
         });
 
-        // メモ列の追加
+        // メモセル
         const memoCell = row.insertCell();
+        memoCell.classList.add('memo-cell');
         if (currentUser) {
-            // ログイン中の場合、編集用のtextareaを表示
-            const textarea = document.createElement('textarea');
-            textarea.value = player.memo || ''; // メモがなければ空文字列
-            textarea.maxLength = 200; // 最大文字数
-            textarea.rows = 2; // 表示行数
-            textarea.classList.add('memo-textarea');
-            textarea.dataset.field = 'memo'; // データ属性にフィールド名を設定
-            textarea.dataset.playerId = player.id; // データ属性に選手IDを設定
-            memoCell.appendChild(textarea);
+            const memoInput = document.createElement('textarea');
+            memoInput.value = player.memo || '';
+            memoInput.dataset.playerId = player.id;
+            memoInput.dataset.field = 'memo';
+            memoInput.classList.add('edit-textarea');
+            memoInput.placeholder = 'メモ';
+            memoCell.appendChild(memoInput);
+
+            // メモ入力値変更時のイベントリスナーを設定 (debounceで最適化)
+            let memoTypingTimer;
+            memoInput.addEventListener('input', () => {
+                clearTimeout(memoTypingTimer);
+                memoTypingTimer = setTimeout(async () => {
+                    const updatedValue = memoInput.value;
+                    const playerId = memoInput.dataset.playerId;
+                    const field = memoInput.dataset.field;
+                    const updatedData = { [field]: updatedValue };
+                    await updatePlayer(playerId, updatedData, player.name); // 更新処理に選手名を渡すように変更
+                }, 5000); // 5秒入力がなければ更新
+            });
         } else {
-            // 未ログイン時はテキスト表示
-            const memoDiv = document.createElement('div');
-            memoDiv.classList.add('memo-display');
-            memoDiv.textContent = player.memo || '-'; // メモがなければハイフン表示
-            memoCell.appendChild(memoDiv);
+            memoCell.textContent = player.memo || '記載事項なし。'; // 未ログイン時はテキスト表示
         }
 
 
-        // 操作ボタン列の追加
+        // 操作セル
         const actionCell = row.insertCell();
-        actionCell.classList.add('action-buttons');
-
-        // ログインしている場合のみ、更新・卒業ボタンを表示
+        actionCell.classList.add('action-cell');
         if (currentUser) {
             const updateButton = document.createElement('button');
             updateButton.textContent = '更新';
             updateButton.classList.add('update-btn');
             updateButton.addEventListener('click', async () => {
-                // その行の全てのinputとtextarea、selectから最新のデータを取得して更新
-                const updatedData = {};
-                // 各inputのdataset.fieldを使ってデータを収集
-                stats.forEach(stat => {
-                    const inputEl = row.querySelector(`input[data-field="${stat.key}"]`);
-                    if (inputEl) {
-                        updatedData[stat.key] = parseInt(inputEl.value);
-                    }
-                });
-                // メモのtextareaからデータを収集
-                const memoTextarea = row.querySelector('textarea[data-field="memo"]');
-                if (memoTextarea) {
-                    updatedData.memo = memoTextarea.value;
-                }
-                // 守備位置のselectからデータを収集
-                const update_Posi = [];
-                row.querySelectorAll('.position-select-input').forEach(selectEl => {
-                    if (selectEl.value !== '') { // 空でない選択値のみを追加
-                        update_Posi.push(selectEl.value);
-                    }
-                });
-                updatedData.positions = update_Posi;
+                // 現在の入力フィールドから最新のデータを取得
+                const updatedData = {
+                    enrollmentYear: parseInt(row.querySelector('[data-field="enrollmentYear"]') ? row.querySelector('[data-field="enrollmentYear"]').value : player.enrollmentYear),
+                    name: row.querySelector('[data-field="name"]') ? row.querySelector('[data-field="name"]').value : player.name,
+                    positions: [
+                        row.querySelector('[data-field="positions_0"]') ? row.querySelector('[data-field="positions_0"]').value : player.positions[0] || '',
+                        row.querySelector('[data-field="positions_1"]') ? row.querySelector('[data-field="positions_1"]').value : player.positions[1] || '',
+                        row.querySelector('[data-field="positions_2"]') ? row.querySelector('[data-field="positions_2"]').value : player.positions[2] || ''
+                    ].filter(p => p !== ''),
+                    throwing: parseInt(row.querySelector('[data-field="throwing"]') ? row.querySelector('[data-field="throwing"]').value : player.throwing),
+                    dandou: parseInt(row.querySelector('[data-field="dandou"]') ? row.querySelector('[data-field="dandou"]').value : player.dandou),
+                    meet: parseInt(row.querySelector('[data-field="meet"]') ? row.querySelector('[data-field="meet"]').value : player.meet),
+                    power: parseInt(row.querySelector('[data-field="power"]') ? row.querySelector('[data-field="power"]').value : player.power),
+                    speed: parseInt(row.querySelector('[data-field="speed"]') ? row.querySelector('[data-field="speed"]').value : player.speed),
+                    armStrength: parseInt(row.querySelector('[data-field="armStrength"]') ? row.querySelector('[data-field="armStrength"]').value : player.armStrength),
+                    defense: parseInt(row.querySelector('[data-field="defense"]') ? row.querySelector('[data-field="defense"]').value : player.defense),
+                    catching: parseInt(row.querySelector('[data-field="catching"]') ? row.querySelector('[data-field="catching"]').value : player.catching),
+                    memo: row.querySelector('[data-field="memo"]') ? row.querySelector('[data-field="memo"]').value : player.memo
+                };
+               // 投手の場合、投手能力のフィールドも取得
+                if (player.positions.includes('投手')) {
+                    const pitcherStatsContainer = document.getElementById(`pitcher-stats-row-${player.id}`);
+                    if (pitcherStatsContainer) {
+                        updatedData.pitSpeed = parseInt(pitcherStatsContainer.querySelector('[data-field="pitSpeed"]').value); // pitSpeed を使用
+                        updatedData.control = parseInt(pitcherStatsContainer.querySelector('[data-field="control"]').value);
+                        updatedData.stamina = parseInt(pitcherStatsContainer.querySelector('[data-field="stamina"]').value);
 
-                // 更新処理に選手名を渡すように変更
+                        const BallHenka1 = {};
+                        breakingBallDirections.forEach(b => { // ここで breakingBallDirections が利用可能になりました
+                            const input = pitcherStatsContainer.querySelector(`[data-field="BallHenka1_${b.dir}"]`);
+                            if (input && !isNaN(parseInt(input.value))) {
+                                BallHenka1[b.dir] = parseInt(input.value);
+                            }
+                        });
+                        updatedData.BallHenka1 = BallHenka1;
+
+                        const BallHenka2Type = pitcherStatsContainer.querySelector('[data-field="BallHenka2_type"]').value;
+                        const BallHenka2Value = parseInt(pitcherStatsContainer.querySelector('[data-field="BallHenka2_value"]').value);
+                        updatedData.BallHenka2 = {
+                            type: BallHenka2Type,
+                            value: isNaN(BallHenka2Value) ? '' : BallHenka2Value
+                        };
+                    }
+                }
+       // 更新処理に選手名を渡すように変更
                 await updatePlayer(player.id, updatedData, player.name);
             });
 
@@ -574,9 +703,39 @@ export function updatePlayerListUI(playersData = []) {
         } else {
             actionCell.textContent = '-'; // 未ログイン時は何も表示しないか、'-'などを表示
         }
+
+        // メインの選手行をリストに追加するよ
+        rowsToAppend.push(row);
+
+        // 投手の場合、詳細情報を表示する行を追加
+        if (player.positions && player.positions.includes('投手')) {
+            const pitcherStatsRow = document.createElement('tr');
+            pitcherStatsRow.id = `pitcher-stats-row-${player.id}`;
+            pitcherStatsRow.classList.add('pitcher-stats-row', 'hidden'); // 初期は非表示
+
+            const pitcherStatsCell = document.createElement('td');
+            pitcherStatsCell.setAttribute('colspan', '14'); // 全ての列をまたぐように設定 (列数に合わせて変更)
+            pitcherStatsCell.innerHTML = createPitcherStatsRowHtml(player);
+            pitcherStatsRow.appendChild(pitcherStatsCell);
+
+            // ピッチャー能力の行を、メインの選手行のすぐ後にリストに追加するよ
+            rowsToAppend.push(pitcherStatsRow);
+        }
     });
 
-    // 最後に登録行を再度追加 (DOM操作で移動されるため、毎回明示的に最後にする)
-    // これにより、選手が追加・卒業されても登録行が常に一番下になる
+    // ここまで変更されたロジック
+
+    // playerListBodyを再度クリアする（registRowは含まない）
+    // これは、新しい行をまとめて追加する前に、残っている可能性のある古い行を確実に取り除くためだよ
+    Array.from(playerListBody.children).forEach(child => {
+        if (child.id !== 'regist-row') {
+            child.remove();
+        }
+    });
+
+    // 集めたすべての行をplayerListBodyにまとめて追加するよ
+    rowsToAppend.forEach(r => playerListBody.appendChild(r));
+
+    // 最後に、registRow（選手登録の行）がテーブルの一番最後にくるようにするよ
     playerListBody.appendChild(registRow);
 }

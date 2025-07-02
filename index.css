@@ -7,7 +7,7 @@
 .list-player th,
 .list-player td {
     border: 1px solid #DDDDDD; /* ボーダーの色と太さ */
-    text-align: center; /* 中央揃え */
+    
 }
 /* テーブルヘッダーのスタイル */
 .list-player th {
@@ -65,10 +65,28 @@ input[type="number"]::-webkit-inner-spin-button {
     width: 100%; /* 幅を100%に */
 }
 
+.grade-cell {
+    text-align: center; /* 中央揃え */
+    font-weight: bold; /* 太字 */
+}
+
 /* 選手名のフォントサイズ */
 .name-cell {
     font-size: 25px; /* 任意のサイズに調整 */
     font-weight: bold; /* 太字 */
+    text-align: center; /* 中央揃え */
+}
+
+.position-cell {
+    text-align: center; /* 中央揃え */
+    font-weight: bold; /* 太字 */
+    width: 80px; /* 幅を設定 */
+}
+
+.data-cell {
+    text-align: center; /* 中央揃え */
+    font-weight: bold; /* 太字 */
+    width: 60px; /* 幅を設定 */
 }
 
 /* 登録行のスタイル */
@@ -104,23 +122,25 @@ input[type="number"]::-webkit-inner-spin-button {
     border: none; /* ボーダーなし */
 }
 
-/* 既存の操作ボタンのスタイル */
-.action-buttons button {
+/* 更新ボタンのスタイル */
+.update-btn {
     margin-left: 5px; /* 左側の余白 */
     padding: 5px 10px; /* 内側の余白 */
     font-size: 14px; /* フォントサイズ */
     cursor: pointer; /* カーソルをポインターに */
     border-radius: 3px; /* 角を丸く */
-}
-/* 更新ボタンのスタイル */
-.action-buttons .update-btn {
     background-color: #4285F4; /* 青 */
     color: white; /* 文字色 */
     border: none; /* ボーダーなし */
     margin-bottom: 5px; /* 下側の余白 */
 }
 /* 卒業ボタンのスタイル */
-.action-buttons .delete-btn {
+.delete-btn {
+    margin-left: 5px; /* 左側の余白 */
+    padding: 5px 10px; /* 内側の余白 */
+    font-size: 14px; /* フォントサイズ */
+    cursor: pointer; /* カーソルをポインターに */
+    border-radius: 3px; /* 角を丸く */
     background-color: #f44336; /* 赤 */
     color: white; /* 文字色 */
     border: none; /* ボーダーなし */
@@ -228,6 +248,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .state-width{ min-width: 117px; max-width: 117px;}
 .button-width { min-width: 127px; max-width: 127px;}
 .position-width { min-width: 90px; max-width: 90px; }
+.pitbutton-width { min-width: 80px; max-width: 80px; }
 
 /* 守備位置選択ドロップダウンのスタイル */
 .position-inputs select {
@@ -260,10 +281,6 @@ input[type="number"]::-webkit-inner-spin-button {
     color: #666; /* 文字色 */
     font-size: 0.9em; /* フォントサイズを小さく */
 }
-/* 守備位置セルの幅 */
-.position-cell {
-    width: 80px;
-}
 
 /* 守備位置編集用のコンテナスタイル */
 .position-edit {
@@ -274,7 +291,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* 守備位置選択入力のスタイル */
-.position-select-input {
+.input-position {
     padding: 3px; /* 内側の余白 */
     font-size: 16px; /* フォントサイズ */
     border: 1px solid #ccc; /* ボーダー */
@@ -286,3 +303,30 @@ input[type="number"]::-webkit-inner-spin-button {
 .hosyu-row { background-color: #e7fcff; }
 .naiyasyu-row { background-color: #fffbd7; }
 .gaiyasyu-row { background-color: #efffdf; }
+
+/* 要素を非表示にするためのクラス */
+.hidden {
+    display: none; /* これで要素が見えなくなります */
+}
+
+/* 詳細ボタンのスタイル（任意ですが、ボタンらしく見せるために推奨） */
+.detail-btn {
+    background-color: #e76767; /* 青い背景 */
+    font-weight: bold; /* 太字 */
+    color: white; /* 文字色を白に */
+    border: none; /* 枠線なし */
+    padding: 5px 10px; /* 内側の余白 */
+    border-radius: 4px; /* 角を少し丸く */
+    font-size: 14px; /* 文字の大きさ */
+}
+
+.pitcher-container {
+    display: flex; /* Flexboxを使用 */
+    flex-direction: row;/* 横方向に配置 */
+    padding : 10px; /* 周囲に余白 */
+}
+.pit-stat1 {
+    display: flex; /* Flexboxを使用 */
+    flex-direction: column; /* 縦方向に配置 */
+    margin-right : 50px; /* 周囲に余白 */
+}
