@@ -424,8 +424,40 @@ export function updatePlayerListUI(playersData = []) {
 
         // 選手名セル (テキスト表示)
         const nameCell = row.insertCell();
-        nameCell.textContent = player.name;
         nameCell.classList.add('name-cell');
+        const nameText = document.createElement(`p`);
+        nameText.classList.add('name-text'); // スタイル用のクラスを追加
+        nameText.textContent = player.name;
+        nameCell.appendChild(nameText);        
+
+        // 性格セレクトボックスの作成
+        if (currentUser) {
+            // ログイン中の場合、選手の性格を選択できるセレクトボックスを表示
+            const personalitySelect = document.createElement('select');
+            personalitySelect.classList.add('input-personality');
+            personalitySelect.dataset.playerId = player.id;
+            personalitySelect.dataset.field = 'personality'; // セレクトボックスのデータ属性を設定
+            // 性格の選択肢を追加
+            const personalities = ['性格を選択','天才肌', 'ごくふつう', '内気', 'したたか', 'クール', 'お調子者', 'やんちゃ', '熱血漢']; // '選択'はそのまま表示するために追加
+            personalities.forEach(personality => {
+                const option = document.createElement('option');
+                option.value = personality;
+                option.textContent = personality === '選択' ? '性格を選択' : personality; // '選択'はそのまま表示
+                if (player.personality === personality) {
+                    option.selected = true; // 選手の性格が選択肢と一致する場合、選択状態にする
+                }
+                personalitySelect.appendChild(option);
+            });
+            // セレクトボックスの変更イベントリスナーを設定
+            nameCell.addEventListener('change', async (e) => {
+                const updatedValue = e.target.value;
+                const playerId = e.target.dataset.playerId;
+                const field = e.target.dataset.field;
+                const updatedData = { [field]: updatedValue };
+                await updatePlayer(playerId, updatedData, player.name); // 更新処理に選手名を渡すように変更
+            });
+            nameCell.appendChild(personalitySelect);
+        }
 
         // 守備位置の表示または編集UI
         const positionCell = row.insertCell();
@@ -531,7 +563,6 @@ export function updatePlayerListUI(playersData = []) {
             cell.classList.add('data-cell'); // スタイル用のクラスを追加
 
             if (currentUser) {
-
                 // アルファベットランク表示用のspan
                 const gradeSpan = document.createElement('span');
                 gradeSpan.classList.add('grade-display');
@@ -576,19 +607,21 @@ export function updatePlayerListUI(playersData = []) {
                 let inputTypingTimer;
                 input.addEventListener('change', async (e) => {
                     clearTimeout(inputTypingTimer);
+                    // 入力値を整数に変換
+                    const updatedValue = parseInt(e.target.value);
+                    const playerId = e.target.dataset.playerId;
+                    const field = e.target.dataset.field;
+
+                    const newGrade = convertStatToGrade(field, updatedValue); // ランクを再計算
+                    gradeSpan.textContent = newGrade; // ランクを更新
+                    applyGradeColor(gradeSpan, field, newGrade); // 色も更新
+                    
+                    // 1.5秒入力がなければ更新
                     inputTypingTimer = setTimeout( async() => {
-                        // 入力値を整数に変換
-                        const updatedValue = parseInt(e.target.value);
-                        const playerId = e.target.dataset.playerId;
-                        const field = e.target.dataset.field;
                         // Firestoreを更新
-                        const updatedData = { [field]: updatedValue };
+                        const updatedData = { [field]: updatedValue }; // 更新するフィールドと値をオブジェクトにまとめる
                         await updatePlayer(playerId, updatedData, player.name); // 更新処理に選手名を渡すように変更
-                        // ランク表示も即座に更新
-                        const newGrade = convertStatToGrade(field, updatedValue);
-                        gradeSpan.textContent = newGrade;
-                        applyGradeColor(gradeSpan, field, newGrade);
-                    }, 3000); // 3秒入力がなければ更新
+                    }, 400); 
                 });
             } else {
                 // 未ログインの場合、テキストとランクを表示
