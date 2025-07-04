@@ -4,16 +4,26 @@
     width: auto; /* テーブルの幅を内容に合わせる */
 }
 /* テーブルヘッダーとセルの共通スタイル */
-.list-player th,
-.list-player td {
+.list-player th{
+    font-weight: bold; /* 太字 */
     border: 1px solid #DDDDDD; /* ボーダーの色と太さ */
-    
+    position: sticky;
+  top: 0;
+  left: 0;
+  border-top: none;
+}
+.list-player td {
+    border-top: 1px solid #979797; /* ボーダーの色と太さ */
+    border-bottom: 1px solid #979797; /* ボーダーの色と太さ */
+    border-right: 1px solid #DDDDDD; /* 右側のボーダー */
+    border-left: 1px solid #DDDDDD; /* 右側のボーダー */
 }
 /* テーブルヘッダーのスタイル */
 .list-player th {
     font-size: 18px; /* フォントサイズ */
     background-color: #f2f2f2; /* 背景色 */
 }
+
 /* 学年表示のスタイル */
 .data-grade {
     font-weight: bold; /* 太字 */
@@ -44,14 +54,27 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0; /* 余白をなくす */
 }
 
-/* メモ入力欄のスタイル */
-.list-player textarea {
-    width: 100%; /* 幅を100%に */
-    height: 70px; /* 高さを調整 */
-    font-size: 16px; /* フォントサイズ */
-    border: none; /* ボーダーなし */
+.edit-textarea{
+    width: 350px;
 }
 
+/* メモ入力欄のスタイル */
+.list-player textarea {
+    /*width: 100%; /* 幅を100%に */
+    height: 70px; /* 高さを調整 */
+    font-size: 16px; /* フォントサイズ */
+    border-style: none; /* ボーダーなし */
+    /* 文字列に下線を引く */
+    text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
+}
+#reginput-memo{
+    width: 350px; /* 幅を100%に */
+    height: 70px; /* 高さを調整 */
+    font-size: 16px; /* フォントサイズ */
+    border-style: none; /* ボーダーなし */
+    /* 文字列に下線を引く */
+    text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
+}
 /* 未ログイン時のメモ表示スタイル */
 .memo-display {
     text-align: left; /* 左揃え */
@@ -246,7 +269,7 @@ input[type="number"]::-webkit-inner-spin-button {
 /* 各列の最小・最大幅を設定 */
 .grade-width{ min-width: 112px; max-width: 112px;}
 .name-width { min-width: 117px; max-width: 117px;}
-.memo-width { min-width: 247px; max-width: 247px;}
+.memo-width { min-width: 277px; max-width: 277px;}
 .state-width{ min-width: 117px; max-width: 117px;}
 .button-width { min-width: 127px; max-width: 127px;}
 .position-width { min-width: 90px; max-width: 90px; }
@@ -331,4 +354,12 @@ input[type="number"]::-webkit-inner-spin-button {
     display: flex; /* Flexboxを使用 */
     flex-direction: column; /* 縦方向に配置 */
     margin-right : 50px; /* 周囲に余白 */
+}
+/* 性格によるハイライト表示 */
+.seikaku-highlight {
+    color: rgb(0, 0, 0);
+    background-color: #9bff74ab !important; /* 薄い黄色 */
+}
+#reginput-name{
+    width: 120px;
 }

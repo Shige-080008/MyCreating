@@ -20,6 +20,7 @@ let regArmInput; // 登録フォームの肩力入力フィールド
 let regDefenseInput; // 登録フォームの守備力入力フィールド
 let regCatchInput; // 登録フォームの捕球入力フィールド
 let regMemoInput; // 登録フォームのメモ入力フィールド
+let regseikakuInput; // 登録フォームの性格選択フィールド
 let regButton; // 登録ボタン
 let clearButton; // クリアボタン
 
@@ -49,6 +50,18 @@ const breakingBallDirections = [
     { dir: 'right', symbol: '→' }
 ];
 
+// 性格と上がりやすいパラメータのマップ
+const seikakuStatMap = {
+    '天才肌': ['meet', 'power', 'speed', 'armStrength', 'defense', 'catching', 'control', 'stamina', 'pitSpeed', 'BallHenka1_up', 'BallHenka1_down', 'BallHenka1_left', 'BallHenka1_right', 'BallHenka1_downLeft', 'BallHenka1_downRight', 'BallHenka2_value'], // 全てのパラメータ
+    'ごくふつう': ['meet', 'power', 'speed', 'armStrength', 'defense', 'catching', 'control', 'stamina', 'pitSpeed', 'BallHenka1_up', 'BallHenka1_down', 'BallHenka1_left', 'BallHenka1_right', 'BallHenka1_downLeft', 'BallHenka1_downRight', 'BallHenka2_value'], // 全てのパラメータ
+    '内気': ['defense', 'catching', 'BallHenka1_up', 'BallHenka1_down', 'BallHenka1_left', 'BallHenka1_right', 'BallHenka1_downLeft', 'BallHenka1_downRight', 'BallHenka2_value'], // 守備力、捕球、変化量
+    'したたか': ['speed', 'catching', 'BallHenka1_up', 'BallHenka1_down', 'BallHenka1_left', 'BallHenka1_right', 'BallHenka1_downLeft', 'BallHenka1_downRight', 'BallHenka2_value'], // 走力、捕球、変化量
+    'クール': ['meet', 'defense', 'control'], // ミート、守備力、コントロール
+    'お調子者': ['speed', 'armStrength', 'pitSpeed'], // 走力、肩力、球速
+    'やんちゃ': ['meet', 'power', 'pitSpeed'], // ミート、パワー、球速
+    '熱血漢': ['power', 'armStrength', 'stamina'] // パワー、肩力、スタミナ
+};
+
 /**
  * UI要素を取得し、それらへの参照をグローバル変数に格納する関数
  * 他のモジュールからUI要素にアクセスできるように、オブジェクトとして返します
@@ -69,6 +82,7 @@ export function getUIElements() {
     regDefenseInput = document.getElementById('reginput-defense');
     regCatchInput = document.getElementById('reginput-catch');
     regMemoInput = document.getElementById('reginput-memo');
+    regseikakuInput = document.getElementById('reginput-seikaku');
     regButton = document.getElementById('reg-button');
     clearButton = document.getElementById('clear-button');
 
@@ -94,6 +108,7 @@ export function getUIElements() {
         regDefense: regDefenseInput,
         regCatching: regCatchInput,
         regMemo: regMemoInput,
+        regseikaku: regseikakuInput,
         regButton: regButton,
         clearButton: clearButton,
         playerListBody: playerListBody,
@@ -163,11 +178,12 @@ async function handleRegSubmit(event) {
     const defense = parseInt(regDefenseInput.value);
     const catching = parseInt(regCatchInput.value);
     const memo = regMemoInput.value;
+    const seikaku = regseikakuInput.value;
 
     // 入力値のバリデーション（必須項目のチェック）
     if (!name || isNaN(enrollmentYear) || !position1 || isNaN(throwing) || isNaN(dandou) ||
         isNaN(meet) || isNaN(power) || isNaN(speed) || isNaN(armStrength) ||
-        isNaN(defense) || isNaN(catching)) {
+        isNaN(defense) || isNaN(catching) || !seikaku || seikaku === '性格を選択') {
         alert('全ての項目を正しく入力してください！');
         return;
     }
@@ -186,6 +202,7 @@ async function handleRegSubmit(event) {
         defense: defense,
         catching: catching,
         memo: memo,
+        seikaku: seikaku,
     };
 
     // Firestoreに選手データを追加する関数を呼び出し、選手名も渡す
@@ -211,6 +228,7 @@ export function clearRegForm() {
     regDefenseInput.value = '';
     regCatchInput.value = '';
     regMemoInput.value = '';
+    regseikakuInput.value = '性格を選択';
 }
 
 /**
@@ -268,6 +286,43 @@ function applyGradeColor(element, statType, grade) {
         element.classList.add(`grade-${grade}`);
     }
     element.classList.add('stat-grade'); // 基本のスタイルも追加
+}
+
+/**
+ * 性格に応じてパラメータ入力欄にハイライトを適用する関数
+ * @param {object} player - 選手データオブジェクト
+ * @param {HTMLElement} rowElement - 選手データの行要素
+ * @param {HTMLElement} [pitcherRowElement] - 投手詳細データの行要素 (投手の場合のみ)
+ */
+function applyseikakuHighlight(player, rowElement, pitcherRowElement = null) {
+    // まず、既存のハイライトを全て削除する
+    rowElement.querySelectorAll('.seikaku-highlight').forEach(el => {
+        el.classList.remove('seikaku-highlight');
+    });
+    if (pitcherRowElement) {
+        pitcherRowElement.querySelectorAll('.seikaku-highlight').forEach(el => {
+            el.classList.remove('seikaku-highlight');
+        });
+    }
+
+    const seikaku = player.seikaku;
+    if (seikaku && seikakuStatMap[seikaku]) {
+        const statsToHighlight = seikakuStatMap[seikaku];
+
+        statsToHighlight.forEach(statField => {
+            // 選手行内の入力フィールドを検索
+            let inputElement = rowElement.querySelector(`[data-field="${statField}"]`);
+            if (inputElement) {
+                inputElement.classList.add('seikaku-highlight');
+            } else if (pitcherRowElement) {
+                // 投手詳細行内の入力フィールドを検索
+                inputElement = pitcherRowElement.querySelector(`[data-field="${statField}"]`);
+                if (inputElement) {
+                    inputElement.classList.add('seikaku-highlight');
+                }
+            }
+        });
+    }
 }
 
 /**
@@ -397,8 +452,6 @@ export function updatePlayerListUI(playersData = []) {
     // ソートされた選手データを元にテーブルの行を作成・更新
     playersGrade.forEach((player, index) => {
         const row = document.createElement('tr'); // 新しい選手の行を作るよ
-
-        // ... (既存のコード: クラスの追加、dataset.playerIdの設定、セルの作成と内容の追加)
         if (player.positions[0] == '投手') {
             row.classList.add('toushu-row');
         } else if (player.positions[0] == '捕手') {
@@ -433,20 +486,20 @@ export function updatePlayerListUI(playersData = []) {
         // 性格セレクトボックスの作成
         if (currentUser) {
             // ログイン中の場合、選手の性格を選択できるセレクトボックスを表示
-            const personalitySelect = document.createElement('select');
-            personalitySelect.classList.add('input-personality');
-            personalitySelect.dataset.playerId = player.id;
-            personalitySelect.dataset.field = 'personality'; // セレクトボックスのデータ属性を設定
+            const seikakuSelect = document.createElement('select');
+            seikakuSelect.classList.add('input-seikaku');
+            seikakuSelect.dataset.playerId = player.id;
+            seikakuSelect.dataset.field = 'seikaku'; // セレクトボックスのデータ属性を設定
             // 性格の選択肢を追加
-            const personalities = ['性格を選択','天才肌', 'ごくふつう', '内気', 'したたか', 'クール', 'お調子者', 'やんちゃ', '熱血漢']; // '選択'はそのまま表示するために追加
-            personalities.forEach(personality => {
+            const personalities = ['性格を選択', '天才肌', 'ごくふつう', '内気', 'したたか', 'クール', 'お調子者', 'やんちゃ', '熱血漢'];
+            personalities.forEach(seikaku => {
                 const option = document.createElement('option');
-                option.value = personality;
-                option.textContent = personality === '選択' ? '性格を選択' : personality; // '選択'はそのまま表示
-                if (player.personality === personality) {
+                option.value = seikaku;
+                option.textContent = seikaku === '性格を選択' ? '性格を選択' : seikaku;
+                if (player.seikaku === seikaku) {
                     option.selected = true; // 選手の性格が選択肢と一致する場合、選択状態にする
                 }
-                personalitySelect.appendChild(option);
+                seikakuSelect.appendChild(option);
             });
             // セレクトボックスの変更イベントリスナーを設定
             nameCell.addEventListener('change', async (e) => {
@@ -456,7 +509,7 @@ export function updatePlayerListUI(playersData = []) {
                 const updatedData = { [field]: updatedValue };
                 await updatePlayer(playerId, updatedData, player.name); // 更新処理に選手名を渡すように変更
             });
-            nameCell.appendChild(personalitySelect);
+            nameCell.appendChild(seikakuSelect);
         }
 
         // 守備位置の表示または編集UI
@@ -491,7 +544,7 @@ export function updatePlayerListUI(playersData = []) {
             ['', '投手', '捕手', '一塁手', '二塁手', '三塁手', '遊撃手', '外野手'].forEach(pos => {
                 const option = document.createElement('option');
                 option.value = pos;
-                option.textContent = pos === '' ? 'なし' : pos;
+                option.textContent = pos === '' ? '選択' : pos;
                 if (player.positions[1] === pos) {
                     option.selected = true;
                 }
@@ -500,8 +553,6 @@ export function updatePlayerListUI(playersData = []) {
             positionsContainer.appendChild(Select_subPosi1);
 
             // メイン守備位置が投手じゃなければ、サブポジション2を追加
-            // サブポジション2 (投手以外の選手のみ表示)
-            // サブポジション2は投手以外の選手にのみ表示
             if (player.positions[0] !== '投手') {
                 const Select_subPosi2 = document.createElement('select');
                 Select_subPosi2.classList.add('input-position', 'select-subPosi');
@@ -666,7 +717,6 @@ export function updatePlayerListUI(playersData = []) {
             memoCell.textContent = player.memo || '記載事項なし。'; // 未ログイン時はテキスト表示
         }
 
-
         // 操作セル
         const actionCell = row.insertCell();
         actionCell.classList.add('action-cell');
@@ -741,8 +791,9 @@ export function updatePlayerListUI(playersData = []) {
         rowsToAppend.push(row);
 
         // 投手の場合、詳細情報を表示する行を追加
+        let pitcherStatsRow = null;
         if (player.positions && player.positions.includes('投手')) {
-            const pitcherStatsRow = document.createElement('tr');
+            pitcherStatsRow = document.createElement('tr');
             pitcherStatsRow.id = `pitcher-stats-row-${player.id}`;
             pitcherStatsRow.classList.add('pitcher-stats-row', 'hidden'); // 初期は非表示
 
@@ -754,6 +805,8 @@ export function updatePlayerListUI(playersData = []) {
             // ピッチャー能力の行を、メインの選手行のすぐ後にリストに追加するよ
             rowsToAppend.push(pitcherStatsRow);
         }
+        // 性格に応じたハイライトを適用
+        applyseikakuHighlight(player, row, pitcherStatsRow);
     });
 
     // ここまで変更されたロジック
@@ -767,7 +820,7 @@ export function updatePlayerListUI(playersData = []) {
     });
 
     // 集めたすべての行をplayerListBodyにまとめて追加するよ
-    rowsToAppend.forEach(r => playerListBody.appendChild(r));
+    rowsToAppend.forEach(row => playerListBody.appendChild(row));
 
     // 最後に、registRow（選手登録の行）がテーブルの一番最後にくるようにするよ
     playerListBody.appendChild(registRow);
