@@ -42,7 +42,7 @@ const positionOrder = {
 };
 
 // 投手変化球の方向定義をグローバルスコープに移動
-const breakingBallDirections = [
+const BallHenkaDirections = [
     { dir: 'left', symbol: '←' },
     { dir: 'downLeft', symbol: '↙' },
     { dir: 'down', symbol: '↓' },
@@ -68,21 +68,21 @@ const seikakuStatMap = {
  */
 export function getUIElements() {
     // 登録用の入力フィールドへの参照を取得
-    regYearInput = document.getElementById('reginput-year');
-    regNameInput = document.getElementById('reginput-name');
-    regPosi1Input = document.getElementById('reginput-posi1');
-    regPosi2Input = document.getElementById('reginput-posi2');
-    regPosi3Input = document.getElementById('reginput-posi3');
-    regThrowInput = document.getElementById('reginput-throw');
-    regDandouInput = document.getElementById('reginput-dandou');
-    regMeetInput = document.getElementById('reginput-meet');
-    regPowerInput = document.getElementById('reginput-power');
-    regSpeedInput = document.getElementById('reginput-speed');
-    regArmInput = document.getElementById('reginput-arm');
-    regDefenseInput = document.getElementById('reginput-defense');
-    regCatchInput = document.getElementById('reginput-catch');
-    regMemoInput = document.getElementById('reginput-memo');
-    regseikakuInput = document.getElementById('reginput-seikaku');
+    regYearInput = document.getElementById('rgstInput-year');
+    regNameInput = document.getElementById('rgstInput-name');
+    regPosi1Input = document.getElementById('rgstInput-posi1');
+    regPosi2Input = document.getElementById('rgstInput-posi2');
+    regPosi3Input = document.getElementById('rgstInput-posi3');
+    regThrowInput = document.getElementById('rgstInput-throw');
+    regDandouInput = document.getElementById('rgstInput-dandou');
+    regMeetInput = document.getElementById('rgstInput-meet');
+    regPowerInput = document.getElementById('rgstInput-power');
+    regSpeedInput = document.getElementById('rgstInput-speed');
+    regArmInput = document.getElementById('rgstInput-arm');
+    regDefenseInput = document.getElementById('rgstInput-defense');
+    regCatchInput = document.getElementById('rgstInput-catch');
+    regMemoInput = document.getElementById('rgstInput-memo');
+    regseikakuInput = document.getElementById('rgstInput-seikaku');
     regButton = document.getElementById('reg-button');
     clearButton = document.getElementById('clear-button');
 
@@ -237,7 +237,7 @@ export function clearRegForm() {
  * @param {number} value - ステータスの数値
  * @returns {string} アルファベットランク
  */
-function convertStatToGrade(statType, value) {
+function transGrade(statType, value) {
     // 入力値が不正な場合（NaNなど）は空文字列を返す
     if (isNaN(value)) {
         return '';
@@ -292,16 +292,16 @@ function applyGradeColor(element, statType, grade) {
  * 性格に応じてパラメータ入力欄にハイライトを適用する関数
  * @param {object} player - 選手データオブジェクト
  * @param {HTMLElement} rowElement - 選手データの行要素
- * @param {HTMLElement} [pitcherRowElement] - 投手詳細データの行要素 (投手の場合のみ)
+ * @param {HTMLElement} [pitRowElement] - 投手詳細データの行要素 (投手の場合のみ)
  */
-function applyseikakuHighlight(player, rowElement, pitcherRowElement = null) {
+function seikakuColor(player, rowElement, pitRowElement = null) {
     // まず、既存のハイライトを全て削除する
-    rowElement.querySelectorAll('.seikaku-highlight').forEach(el => {
-        el.classList.remove('seikaku-highlight');
+    rowElement.querySelectorAll('.seikaku-color').forEach(el => {
+        el.classList.remove('seikaku-color');
     });
-    if (pitcherRowElement) {
-        pitcherRowElement.querySelectorAll('.seikaku-highlight').forEach(el => {
-            el.classList.remove('seikaku-highlight');
+    if (pitRowElement) {
+        pitRowElement.querySelectorAll('.seikaku-color').forEach(el => {
+            el.classList.remove('seikaku-color');
         });
     }
 
@@ -313,12 +313,12 @@ function applyseikakuHighlight(player, rowElement, pitcherRowElement = null) {
             // 選手行内の入力フィールドを検索
             let inputElement = rowElement.querySelector(`[data-field="${statField}"]`);
             if (inputElement) {
-                inputElement.classList.add('seikaku-highlight');
-            } else if (pitcherRowElement) {
+                inputElement.classList.add('seikaku-color');
+            } else if (pitRowElement) {
                 // 投手詳細行内の入力フィールドを検索
-                inputElement = pitcherRowElement.querySelector(`[data-field="${statField}"]`);
+                inputElement = pitRowElement.querySelector(`[data-field="${statField}"]`);
                 if (inputElement) {
-                    inputElement.classList.add('seikaku-highlight');
+                    inputElement.classList.add('seikaku-color');
                 }
             }
         });
@@ -330,21 +330,21 @@ function applyseikakuHighlight(player, rowElement, pitcherRowElement = null) {
  * @param {object} player - 選手データオブジェクト
  * @returns {string} 投手ステータス表示用のHTML文字列
  */
-function createPitcherStatsRowHtml(player) {
+function createpitStats(player) {
     const pitSpeed = player.pitSpeed || ''; // pitSpeed を使用
     const control = player.control || '';
     const stamina = player.stamina || '';
     const BallHenka1 = player.BallHenka1 || {};
     const BallHenka2 = player.BallHenka2 || { type: '', value: '' };
 
-    const controlGrade = convertStatToGrade('control', control);
-    const staminaGrade = convertStatToGrade('stamina', stamina);
-    const pitSpeedGrade = convertStatToGrade('pitSpeed', pitSpeed);
+    const controlGrade = transGrade('control', control);
+    const staminaGrade = transGrade('stamina', stamina);
+    const pitSpeedGrade = transGrade('pitSpeed', pitSpeed);
 
     // 第二変化量のオプションを生成
-    const secondBreakingBallOptions = `
+    const BallHenka2Options = `
         <option value="">なし</option>
-        ${breakingBallDirections.map(b => `<option value="${b.dir}" ${BallHenka2.type === b.dir ? 'selected' : ''}>${b.symbol}</option>`).join('')}
+        ${BallHenkaDirections.map(b => `<option value="${b.dir}" ${BallHenka2.type === b.dir ? 'selected' : ''}>${b.symbol}</option>`).join('')}
     `;
 
     return `
@@ -364,18 +364,18 @@ function createPitcherStatsRowHtml(player) {
                 </div>
             </div>
             <div class="pit-stat2">
-                <div class="ball-group">
+                <div class="BallHenka1-group">
                     <label>変化量:</label>
-                    ${breakingBallDirections.map(b => `
+                    ${BallHenkaDirections.map(b => `
                         <span>${b.symbol}</span><input type="number" min="0" max="7" value="${BallHenka1[b.dir] || ''}" data-field="BallHenka1_${b.dir}">
                     `).join('')}
                 </div>
-                <div class="breaking-ball2-group">
+                <div class="BallHenka2-group">
                     <label>第二変化量:</label>
                     <select data-field="BallHenka2_type">
-                        ${secondBreakingBallOptions}
+                        ${BallHenka2Options}
                     </select>
-                    <input type="number" min="0" max="7" value="${BallHenka2.value || ''}" data-field="BallHenka2_value" class="breaking-ball2-value">
+                    <input type="number" min="0" max="7" value="${BallHenka2.value || ''}" data-field="BallHenka2_value" class="BallHenka2-group">
                 </div>
             </div>
         </div>
@@ -469,11 +469,11 @@ export function updatePlayerListUI(playersData = []) {
         const gradeP = document.createElement('p');
         gradeP.classList.add('data-grade');
         gradeP.textContent = `${player.calculatedGrade}年生`;
-        const enrollmentYearP = document.createElement('p');
-        enrollmentYearP.classList.add('data-year');
-        enrollmentYearP.textContent = `(入学${player.enrollmentYear}年)`;
+        const YearP = document.createElement('p');
+        YearP.classList.add('data-year');
+        YearP.textContent = `(入学${player.enrollmentYear}年)`;
         playerInfoCell.appendChild(gradeP);
-        playerInfoCell.appendChild(enrollmentYearP);
+        playerInfoCell.appendChild(YearP);
 
         // 選手名セル (テキスト表示)
         const nameCell = row.insertCell();
@@ -574,9 +574,9 @@ export function updatePlayerListUI(playersData = []) {
                 detailButton.textContent = '詳細';
                 detailButton.classList.add('detail-btn');
                 detailButton.addEventListener('click', () => {
-                const pitcherStatsRow = document.getElementById(`pitcher-stats-row-${player.id}`);
-                    if (pitcherStatsRow) {
-                        pitcherStatsRow.classList.toggle('hidden');
+                const pitStatsRow = document.getElementById(`pitStats-row-${player.id}`);
+                    if (pitStatsRow) {
+                        pitStatsRow.classList.toggle('hidden');
                     }
                 });
                 positionsContainer.appendChild(detailButton);
@@ -617,7 +617,7 @@ export function updatePlayerListUI(playersData = []) {
                 // アルファベットランク表示用のspan
                 const gradeSpan = document.createElement('span');
                 gradeSpan.classList.add('grade-display');
-                const grade = convertStatToGrade(stat.field, stat.value);
+                const grade = transGrade(stat.field, stat.value);
                 gradeSpan.textContent = grade;
                 applyGradeColor(gradeSpan, stat.field, grade);
                 cell.appendChild(gradeSpan);
@@ -663,7 +663,7 @@ export function updatePlayerListUI(playersData = []) {
                     const playerId = e.target.dataset.playerId;
                     const field = e.target.dataset.field;
 
-                    const newGrade = convertStatToGrade(field, updatedValue); // ランクを再計算
+                    const newGrade = transGrade(field, updatedValue); // ランクを再計算
                     gradeSpan.textContent = newGrade; // ランクを更新
                     applyGradeColor(gradeSpan, field, newGrade); // 色も更新
                     
@@ -678,7 +678,7 @@ export function updatePlayerListUI(playersData = []) {
                 // 未ログインの場合、テキストとランクを表示
                 const gradeSpan = document.createElement('span');
                 gradeSpan.classList.add('grade-display');
-                const grade = convertStatToGrade(stat.field, stat.value);
+                const grade = transGrade(stat.field, stat.value);
                 gradeSpan.textContent = grade;
                 applyGradeColor(gradeSpan, stat.field, grade);
                 cell.appendChild(gradeSpan);
@@ -721,10 +721,10 @@ export function updatePlayerListUI(playersData = []) {
         const actionCell = row.insertCell();
         actionCell.classList.add('action-cell');
         if (currentUser) {
-            const updateButton = document.createElement('button');
-            updateButton.textContent = '更新';
-            updateButton.classList.add('update-btn');
-            updateButton.addEventListener('click', async () => {
+            const updtBtn = document.createElement('button');
+            updtBtn.textContent = '更新';
+            updtBtn.classList.add('update-btn');
+            updtBtn.addEventListener('click', async () => {
                 // 現在の入力フィールドから最新のデータを取得
                 const updatedData = {
                     enrollmentYear: parseInt(row.querySelector('[data-field="enrollmentYear"]') ? row.querySelector('[data-field="enrollmentYear"]').value : player.enrollmentYear),
@@ -746,23 +746,23 @@ export function updatePlayerListUI(playersData = []) {
                 };
                // 投手の場合、投手能力のフィールドも取得
                 if (player.positions.includes('投手')) {
-                    const pitcherStatsContainer = document.getElementById(`pitcher-stats-row-${player.id}`);
-                    if (pitcherStatsContainer) {
-                        updatedData.pitSpeed = parseInt(pitcherStatsContainer.querySelector('[data-field="pitSpeed"]').value); // pitSpeed を使用
-                        updatedData.control = parseInt(pitcherStatsContainer.querySelector('[data-field="control"]').value);
-                        updatedData.stamina = parseInt(pitcherStatsContainer.querySelector('[data-field="stamina"]').value);
+                    const pitcherContainer = document.getElementById(`pitStats-row-${player.id}`);
+                    if (pitcherContainer) {
+                        updatedData.pitSpeed = parseInt(pitcherContainer.querySelector('[data-field="pitSpeed"]').value); // pitSpeed を使用
+                        updatedData.control = parseInt(pitcherContainer.querySelector('[data-field="control"]').value);
+                        updatedData.stamina = parseInt(pitcherContainer.querySelector('[data-field="stamina"]').value);
 
                         const BallHenka1 = {};
-                        breakingBallDirections.forEach(b => { // ここで breakingBallDirections が利用可能になりました
-                            const input = pitcherStatsContainer.querySelector(`[data-field="BallHenka1_${b.dir}"]`);
+                        BallHenkaDirections.forEach(b => { // ここで BallHenkaDirections が利用可能になりました
+                            const input = pitcherContainer.querySelector(`[data-field="BallHenka1_${b.dir}"]`);
                             if (input && !isNaN(parseInt(input.value))) {
                                 BallHenka1[b.dir] = parseInt(input.value);
                             }
                         });
                         updatedData.BallHenka1 = BallHenka1;
 
-                        const BallHenka2Type = pitcherStatsContainer.querySelector('[data-field="BallHenka2_type"]').value;
-                        const BallHenka2Value = parseInt(pitcherStatsContainer.querySelector('[data-field="BallHenka2_value"]').value);
+                        const BallHenka2Type = pitcherContainer.querySelector('[data-field="BallHenka2_type"]').value;
+                        const BallHenka2Value = parseInt(pitcherContainer.querySelector('[data-field="BallHenka2_value"]').value);
                         updatedData.BallHenka2 = {
                             type: BallHenka2Type,
                             value: isNaN(BallHenka2Value) ? '' : BallHenka2Value
@@ -781,7 +781,7 @@ export function updatePlayerListUI(playersData = []) {
                 await deletePlayer(player.id, player.name); // 卒業関数を呼び出し
             });
 
-            actionCell.appendChild(updateButton);
+            actionCell.appendChild(updtBtn);
             actionCell.appendChild(deleteButton);
         } else {
             actionCell.textContent = '-'; // 未ログイン時は何も表示しないか、'-'などを表示
@@ -791,22 +791,22 @@ export function updatePlayerListUI(playersData = []) {
         rowsToAppend.push(row);
 
         // 投手の場合、詳細情報を表示する行を追加
-        let pitcherStatsRow = null;
+        let pitStatsRow = null;
         if (player.positions && player.positions.includes('投手')) {
-            pitcherStatsRow = document.createElement('tr');
-            pitcherStatsRow.id = `pitcher-stats-row-${player.id}`;
-            pitcherStatsRow.classList.add('pitcher-stats-row', 'hidden'); // 初期は非表示
+            pitStatsRow = document.createElement('tr');
+            pitStatsRow.id = `pitStats-row-${player.id}`;
+            pitStatsRow.classList.add('pitStats-row', 'hidden'); // 初期は非表示
 
             const pitcherStatsCell = document.createElement('td');
             pitcherStatsCell.setAttribute('colspan', '14'); // 全ての列をまたぐように設定 (列数に合わせて変更)
-            pitcherStatsCell.innerHTML = createPitcherStatsRowHtml(player);
-            pitcherStatsRow.appendChild(pitcherStatsCell);
+            pitcherStatsCell.innerHTML = createpitStats(player);
+            pitStatsRow.appendChild(pitcherStatsCell);
 
             // ピッチャー能力の行を、メインの選手行のすぐ後にリストに追加するよ
-            rowsToAppend.push(pitcherStatsRow);
+            rowsToAppend.push(pitStatsRow);
         }
         // 性格に応じたハイライトを適用
-        applyseikakuHighlight(player, row, pitcherStatsRow);
+        seikakuColor(player, row, pitStatsRow);
     });
 
     // ここまで変更されたロジック

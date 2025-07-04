@@ -2,28 +2,26 @@
 .list-player table {
     border-collapse: collapse; /* ボーダーを結合 */
     width: auto; /* テーブルの幅を内容に合わせる */
+    border: 1px solid #000000; /* ボーダーの色と太さ */
 }
+thread { border: 1px solid #000000; }
+thread th { border-right: 0.5px dotted #b1b1b1; }
+tbody tr{ 
+    border-left: 1px solid #000000;
+    border-top: 0.5px solid #b1b1b1;
+}
+tbody td { border-left: 0.5px dotted #b1b1b1; }
 /* テーブルヘッダーとセルの共通スタイル */
 .list-player th{
     font-weight: bold; /* 太字 */
-    border: 1px solid #DDDDDD; /* ボーダーの色と太さ */
+    font-size: 20px;
     position: sticky;
-  top: 0;
-  left: 0;
-  border-top: none;
-}
-.list-player td {
-    border-top: 1px solid #979797; /* ボーダーの色と太さ */
-    border-bottom: 1px solid #979797; /* ボーダーの色と太さ */
-    border-right: 1px solid #DDDDDD; /* 右側のボーダー */
-    border-left: 1px solid #DDDDDD; /* 右側のボーダー */
-}
-/* テーブルヘッダーのスタイル */
-.list-player th {
-    font-size: 18px; /* フォントサイズ */
+    top: 0;
+    left: 0;
+    border-left: 0.5px dotted #b1b1b1;
+    border-bottom: 1px solid #000000;
     background-color: #f2f2f2; /* 背景色 */
 }
-
 /* 学年表示のスタイル */
 .data-grade {
     font-weight: bold; /* 太字 */
@@ -50,8 +48,8 @@
 /* input type="number" のスピンボタン（増減ボタン）を非表示にする */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none; /* デフォルトの外観を無効化 */
-    margin: 0; /* 余白をなくす */
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .edit-textarea{
@@ -67,7 +65,7 @@ input[type="number"]::-webkit-inner-spin-button {
     /* 文字列に下線を引く */
     text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
 }
-#reginput-memo{
+#rgstInput-memo{
     width: 350px; /* 幅を100%に */
     height: 70px; /* 高さを調整 */
     font-size: 16px; /* フォントサイズ */
@@ -356,10 +354,10 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-right : 50px; /* 周囲に余白 */
 }
 /* 性格によるハイライト表示 */
-.seikaku-highlight {
+.seikaku-color {
     color: rgb(0, 0, 0);
     background-color: #9bff74ab !important; /* 薄い黄色 */
 }
-#reginput-name{
+#rgstInput-name{
     width: 120px;
 }
