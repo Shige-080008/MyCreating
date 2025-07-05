@@ -37,7 +37,7 @@ tbody td { border-left: 0.5px dotted #b1b1b1; }
 /* テーブル内の数値・テキスト入力フィールドのスタイル */
 .list-player input[type="number"],
 .list-player input[type="text"] {
-    width: 60px; /* 幅を調整 */
+    width: 30px; /* 幅を調整 */
     text-align: center; /* 中央揃え */
     padding: 3px; /* 内側の余白 */
     font-size: 18px; /* フォントサイズ */
@@ -50,6 +50,9 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+.input-set input[type="number"]{
+    width: 40px; /* 幅を調整 */
 }
 
 .edit-textarea{
@@ -90,10 +93,14 @@ input[type="number"]::-webkit-inner-spin-button {
     text-align: center; /* 中央揃え */
     font-weight: bold; /* 太字 */
 }
+.name-text {
+    font-size: 25px; /* 選手名のフォントサイズ */
+    height: 25px; /* 高さを調整 */
+    line-height: 20px; /* 行の高さを調整 */
+}
 
 /* 選手名のフォントサイズ */
 .name-cell {
-    font-size: 25px; /* 任意のサイズに調整 */
     font-weight: bold; /* 太字 */
     text-align: center; /* 中央揃え */
     display: flex; /* Flexboxを使用 */
@@ -198,6 +205,7 @@ input[type="number"]::-webkit-inner-spin-button {
     text-shadow: 1px 1px 0px gray; /* 影を追加 */
     display: block; /* ブロックレベル要素として縦並びにする */
     text-align: center; /* 中央揃えにする */
+    margin-bottom: 10px; /* 余白をなくす */
 }
 /* 数値表示のスタイル */
 .stat-value {
@@ -211,7 +219,6 @@ input[type="number"]::-webkit-inner-spin-button {
     font-size: 20px; /* フォントサイズ */
     border: 1px solid #ccc; /* ボーダー */
 }
-
 /* 各アルファベットランクの色 */
 .grade-G { color: #C0C0C0; }
 .grade-F { color: #3399ff; }
@@ -260,17 +267,17 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* 登録行の数値入力フィールドの幅 */
-#regist-row .input-set input[type="number"] {
+.grade-cell input[type="number"] {
     width: 60px; /* 元の幅を保持 */
 }
 
 /* 各列の最小・最大幅を設定 */
 .grade-width{ min-width: 112px; max-width: 112px;}
-.name-width { min-width: 117px; max-width: 117px;}
+.name-width { min-width: 97px; max-width: 117px;}
 .memo-width { min-width: 277px; max-width: 277px;}
-.state-width{ min-width: 117px; max-width: 117px;}
+.state-width{ min-width: 87px; max-width: 117px;}
 .button-width { min-width: 127px; max-width: 127px;}
-.position-width { min-width: 90px; max-width: 90px; }
+.position-width { min-width: 77px; max-width: 90px; }
 .pitbutton-width { min-width: 80px; max-width: 80px; }
 
 /* 守備位置選択ドロップダウンのスタイル */
@@ -359,5 +366,15 @@ input[type="number"]::-webkit-inner-spin-button {
     background-color: #9bff74ab !important; /* 薄い黄色 */
 }
 #rgstInput-name{
-    width: 120px;
+    width: 97px;
+}
+
+.rgstInput-seikaku {
+    width: 97px; /* 幅を調整 */
+    height: 30px; /* 高さを調整 */
+    font-size: 13.5px; /* フォントサイズ */
+    border: 1px solid #ccc; /* ボーダー */
+    border-radius: 3px; /* 角を丸く */
+    padding: 3px; /* 内側の余白 */
+    box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }

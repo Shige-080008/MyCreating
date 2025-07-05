@@ -471,7 +471,7 @@ export function updatePlayerListUI(playersData = []) {
         gradeP.textContent = `${player.calculatedGrade}年生`;
         const YearP = document.createElement('p');
         YearP.classList.add('data-year');
-        YearP.textContent = `(入学${player.enrollmentYear}年)`;
+        YearP.textContent = `${player.enrollmentYear}年`;
         playerInfoCell.appendChild(gradeP);
         playerInfoCell.appendChild(YearP);
 
