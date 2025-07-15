@@ -180,12 +180,95 @@ async function handleRegSubmit(event) {
     const memo = regMemoInput.value;
     const seikaku = regseikakuInput.value;
 
-    // 入力値のバリデーション（必須項目のチェック）
-    if (!name || isNaN(enrollmentYear) || !position1 || isNaN(throwing) || isNaN(dandou) ||
-        isNaN(meet) || isNaN(power) || isNaN(speed) || isNaN(armStrength) ||
-        isNaN(defense) || isNaN(catching) || !seikaku || seikaku === '性格を選択') {
-        alert('全ての項目を正しく入力してください！');
-        return;
+    // 必須項目チェック
+    let errorMessage = '必須項目を入力してください（';
+    let errorCount = 0;
+
+    if(!name) {  // 選手名が未入力の場合、赤色にハイライト
+        regNameInput.style.backgroundColor = '#FFDDDD';
+        errorMessage += '選手名';
+        errorCount++;
+    } else { regNameInput.style.backgroundColor = ''; }
+
+    if(isNaN(enrollmentYear)) {  // 入学年が未入力または不正な場合、赤色にハイライト
+        regYearInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += '入学年';
+        errorCount++;
+    } else { regYearInput.style.backgroundColor = ''; }
+
+    if(!position1) {  // 守備位置1が未選択の場合、赤色にハイライト
+        regPosi1Input.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += 'メインポジション';
+        errorCount++;
+    } else { regPosi1Input.style.backgroundColor = ''; }
+    
+    if(isNaN(throwing)) {  // 送球が未入力または不正な場合、赤色にハイライト
+        regThrowInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += '送球';
+        errorCount++;
+    } else { regThrowInput.style.backgroundColor = ''; }
+
+    if(isNaN(dandou)) {  // 弾道が未入力または不正な場合、赤色にハイライト
+         regDandouInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += '弾道';
+        errorCount++;
+    } else { regDandouInput.style.backgroundColor = ''; }
+
+    if(isNaN(meet)) {  // ミートが未入力または不正な場合、赤色にハイライト
+        regMeetInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += 'ミート';
+        errorCount++;
+    } else { regMeetInput.style.backgroundColor = ''; }
+
+    if(isNaN(power)) {  // パワーが未入力または不正な場合、赤色にハイライト
+        regPowerInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += 'パワー';
+        errorCount++;
+    } else { regPowerInput.style.backgroundColor = ''; }
+
+    if(isNaN(speed)) {  // 走力が未入力または不正な場合、赤色にハイライト
+        regSpeedInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += '走力';
+        errorCount++;
+    } else { regSpeedInput.style.backgroundColor = ''; }
+
+    if(isNaN(armStrength)) {  // 肩力が未入力または不正な場合、赤色にハイライト
+        regArmInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += '肩力';
+        errorCount++;
+    } else { regArmInput.style.backgroundColor = ''; }
+
+    if(isNaN(defense)) {  // 守備力が未入力または不正な場合、赤色にハイライト
+        regDefenseInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += '守備力';
+        errorCount++;
+    } else { regDefenseInput.style.backgroundColor = ''; }
+
+    if(isNaN(catching)) {  // 捕球が未入力または不正な場合、赤色にハイライト
+        regCatchInput.style.backgroundColor = '#FFDDDD';
+        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
+        errorMessage += '捕球';
+        errorCount++;
+    } else { regCatchInput.style.backgroundColor = ''; }
+
+    if(!seikaku || seikaku == '性格を選択') {  // 性格が未選択の場合、赤色にハイライト
+        regseikakuInput.style.backgroundColor = '#FFDDDD';
+    } else { regseikakuInput.style.backgroundColor = ''; }
+
+    // エラーがあった場合はアラートを表示し、処理を中断
+    if (errorCount > 0) {
+        errorMessage += ')';
+        alert(errorMessage);
+        return; // エラーがある場合はここで処理を終了
     }
 
     // 選手データをオブジェクトとしてまとめる
@@ -221,12 +304,12 @@ export function clearRegForm() {
     regPosi3Input.value = '';
     regThrowInput.value = '';
     regDandouInput.value = '';
-    regMeetInput.value = '';
-    regPowerInput.value = '';
-    regSpeedInput.value = '';
-    regArmInput.value = '';
-    regDefenseInput.value = '';
-    regCatchInput.value = '';
+    regMeetInput.value = '30';
+    regPowerInput.value = '30';
+    regSpeedInput.value = '30';
+    regArmInput.value = '30';
+    regDefenseInput.value = '30';
+    regCatchInput.value = '30';
     regMemoInput.value = '';
     regseikakuInput.value = '性格を選択';
 }
