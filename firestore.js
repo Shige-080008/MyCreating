@@ -3,7 +3,8 @@
 // Firebase Firestoreの必要な関数をインポート
 import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 // UI関連の関数をインポート（データ変更時にUIを更新するため）
-import { updatePlayerListUI, getUIElements } from './ui.js';
+import { getUIElements } from './ui.js';
+import { updatePlayerListUI} from './viewPlayer.js';
 // 認証関連の変数をインポート（登録・更新・卒業時にユーザーIDを使用するため）
 import { currentUser } from './auth.js';
 

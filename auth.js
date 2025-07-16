@@ -1,11 +1,12 @@
 // auth.js
 
 // Firebase Authenticationの必要な関数をインポート
-import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+//import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 // Firestore関連の関数をインポート（認証状態によってFirestoreの監視を開始するため）
 import { startListeningToPlayers } from './firestore.js';
 // UI関連の関数をインポート（認証状態によってUIを更新するため）
-import { getUIElements, clearRegForm } from './ui.js';
+import { getUIElements } from './ui.js';
+import { clearRegForm } from './rgstPlayer.js';
 
 let auth; // Firebase Authオブジェクトを保持する変数
 let googleProvider; // GoogleAuthProviderオブジェクトを保持する変数
