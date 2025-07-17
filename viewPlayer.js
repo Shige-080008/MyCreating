@@ -165,7 +165,7 @@ function createpitStats(player) {
                     <select data-field="control">
                         ${(() => {
                             let optionsHtml = '';
-                            for (let i = 1; i <= 100; i++) {
+                            for (let i = 100; i >= 1; i--) {
                                 optionsHtml += `<option value="${i}" ${control == i ? 'selected' : ''}>${i}</option>`;
                             }
                             return optionsHtml;
@@ -178,7 +178,7 @@ function createpitStats(player) {
                     <select data-field="stamina">
                         ${(() => {
                             let optionsHtml = '';
-                            for (let i = 1; i <= 100; i++) {
+                            for (let i = 100; i >= 1; i--) {
                                 optionsHtml += `<option value="${i}" ${stamina == i ? 'selected' : ''}>${i}</option>`;
                             }
                             return optionsHtml;
@@ -383,7 +383,7 @@ function createPlayerRow(player) {
                     selectElement.appendChild(option);
                 });
             } else if (stat.field === 'dandou') {
-                for (let i = 1; i <= 4; i++) {
+                for (let i = 4; i >= 1; i--) {
                     const option = document.createElement('option');
                     option.value = i;
                     option.textContent = i;
@@ -393,7 +393,7 @@ function createPlayerRow(player) {
                     selectElement.appendChild(option);
                 }
             } else { // meet, power, speed, armStrength, defense, catching
-                for (let i = 1; i <= 100; i++) { // 1から100までのオプション
+                for (let i = 100; i >= 1; i--) { // 1から100までのオプション
                     const option = document.createElement('option');
                     option.value = i;
                     option.textContent = i;
