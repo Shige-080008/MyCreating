@@ -3,7 +3,7 @@
 import { getUIElements } from './ui.js';
 import { addPlayer } from './firestore.js';
 import { currentUser } from './auth.js';
-import { transGrade, applyGradeColor } from './viewPlayer.js'; // Import the functions
+import { transGrade, applyGradeColor } from './viewPlayer.js';
 
 let regYearInput;
 let regNameInput;
@@ -23,7 +23,7 @@ let regseikakuInput;
 let regButton;
 let clearButton;
 
-// References to the new span elements for displaying grades
+// 新規登録フォームのグレード表示用のspan要素を取得
 let regThrowGradeSpan;
 let regDandouGradeSpan;
 let regMeetGradeSpan;

@@ -1,10 +1,5 @@
 // ui.js
 
-// Firebase Firestoreの登録・更新・卒業関数をインポート (今回は不要、各機能モジュールでインポート)
-// import { addPlayer, updatePlayer, deletePlayer } from './firestore.js';
-// 認証のログイン状態をインポート (今回は不要、各機能モジュールでインポート)
-// import { currentUser } from './auth.js';
-
 // HTML要素への参照を保持する変数群
 let regYearInput;
 let regNameInput;
@@ -85,25 +80,8 @@ export function getUIElements() {
 /**
  * UIの初期化を行う関数
  * フォームの数値入力フィールドの増減ボタンにイベントリスナーを設定します
- */
+ 
 export function initUI() {
     const elements = getUIElements(); // 要素への参照を確保
 
-    // 新規登録フォームの数値入力フィールドの増減ボタンにイベントリスナーを追加
-    document.querySelectorAll('#regist-row .input-set').forEach(container => {
-        const input = container.querySelector('input[type="number"]');
-        const decreBtn = container.querySelector('.decrease-btn');
-        const increBtn = container.querySelector('.increase-btn');
-
-        if (input && decreBtn && increBtn) {
-            decreBtn.addEventListener('click', () => {
-                input.stepDown();
-                input.dispatchEvent(new Event('input'));
-            });
-            increBtn.addEventListener('click', () => {
-                input.stepUp();
-                input.dispatchEvent(new Event('input'));
-            });
-        }
-    });
-}
+}*/

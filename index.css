@@ -118,6 +118,12 @@ input[type="number"]::-webkit-inner-spin-button {
     font-weight: bold; /* 太字 */
     width: 60px; /* 幅を設定 */
 }
+.data-cell select {
+    font-size: 20px;
+    width: 50px; /* 幅を設定 */
+    text-align: center; /* 中央揃え */
+
+}
 
 /* 登録行のスタイル */
 #regist-row {
@@ -129,6 +135,12 @@ input[type="number"]::-webkit-inner-spin-button {
 #regist-row textarea,
 #regist-row select {
     background-color: #fff; /* 背景色 */
+}
+#regist-row select {
+    font-size: 20px;
+    text-align: center; /* 中央揃え */
+    margin-left: 10px;
+    margin-right: 10px;
 }
 /* 登録行のボタンのスタイル */
 .Buttons_regist button {
@@ -240,8 +252,8 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* 数値入力ボタンのスタイル */
 .input-set {
-    display: flex; /* Flexboxを使用 */
-    justify-content: center; /* 中央揃え */
+    display: flex;
+    justify-content: center;
 }
 
 .input-set button {
@@ -249,16 +261,6 @@ input[type="number"]::-webkit-inner-spin-button {
     border: 1px solid #ccc; /* ボーダー */
     height: 30px; /* 高さを入力フィールドに合わせる */
 
-}
-
-.input-set .decrease-btn {
-    border-radius: 3px 0 0 3px; /* 左側の角を丸く */
-    margin-right: -1px; /* ボーダーを重ねる */
-}
-
-.input-set .increase-btn {
-    border-radius: 0 3px 3px 0; /* 右側の角を丸く */
-    margin-left: -1px; /* ボーダーを重ねる */
 }
 
 .input-set input[type="number"] {
@@ -275,9 +277,9 @@ input[type="number"]::-webkit-inner-spin-button {
 .grade-width{ min-width: 112px; max-width: 112px;}
 .name-width { min-width: 97px; max-width: 117px;}
 .memo-width { min-width: 277px; max-width: 277px;}
-.state-width{ min-width: 87px; max-width: 117px;}
+.state-width{ min-width: 77px; max-width: 117px;}
 .button-width { min-width: 127px; max-width: 127px;}
-.position-width { min-width: 77px; max-width: 90px; }
+.position-width { min-width: 72px; max-width: 90px; }
 .pitbutton-width { min-width: 80px; max-width: 80px; }
 
 /* 守備位置選択ドロップダウンのスタイル */
@@ -371,12 +373,19 @@ input[type="number"]::-webkit-inner-spin-button {
     flex-direction: column; /* 縦方向に配置 */
 }
 
+.input-seikaku {
+    font-size: 15px;
+    width: 100%; /* 幅を設定 */
+    text-align: center; /* 中央揃え */
+}
+
 .rgstInput-seikaku {
     width: 97px; /* 幅を調整 */
     height: 30px; /* 高さを調整 */
-    font-size: 13.5px; /* フォントサイズ */
+    font-size: 20px; /* フォントサイズ */
     border: 1px solid #ccc; /* ボーダー */
     border-radius: 3px; /* 角を丸く */
     padding: 3px; /* 内側の余白 */
     box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
+

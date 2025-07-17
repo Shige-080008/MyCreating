@@ -8,7 +8,6 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/11.8.1/firebase
 // 各モジュールの初期化関数をインポート
 import { initAuth } from './auth.js';
 import { initFirestore } from './firestore.js';
-import { initUI } from './ui.js';
 import { initRegistFormListeners } from './rgstPlayer.js'; // 登録フォームのイベントリスナー
 
 // Firebase構成オブジェクト（ご自身のFirebaseプロジェクトの設定に合わせてください）
@@ -33,7 +32,6 @@ const googleProvider = new GoogleAuthProvider();
 
 // 各モジュールを初期化
 document.addEventListener('DOMContentLoaded', () => {
-    initUI(); // UI要素の取得と一部イベントリスナーの設定
     initRegistFormListeners(); // 登録フォームのイベントリスナー設定
     initAuth(auth, googleProvider, signInWithPopup, signOut, onAuthStateChanged); // 認証モジュールの初期化
     initFirestore(db); // Firestoreモジュールの初期化
