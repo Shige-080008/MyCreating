@@ -45,7 +45,7 @@ const seikakuStatMap = {
  * @param {number} value - ステータスの数値
  * @returns {string} アルファベットランク
  */
-function transGrade(statType, value) {
+export function transGrade(statType, value) {
     if (isNaN(value)) {
         return '';
     }
@@ -77,7 +77,7 @@ function transGrade(statType, value) {
  * @param {string} statType - ステータスの種類 ('throwing', 'meet', ...)
  * @param {string} grade - アルファベットランク (例: 'A', 'S', 'G')
  */
-function applyGradeColor(element, statType, grade) {
+export function applyGradeColor(element, statType, grade) {
     element.classList.remove('grade-G', 'grade-F', 'grade-E', 'grade-D', 'grade-C', 'grade-B', 'grade-A', 'grade-S',
          'grade-throwing-G', 'grade-throwing-F', 'grade-throwing-E', 'grade-throwing-D', 'grade-throwing-C', 'grade-throwing-B', 'grade-throwing-A', 'grade-throwing-S');
 
@@ -220,11 +220,11 @@ function createPlayerRow(player) {
         seikakuSelect.classList.add('input-seikaku');
         seikakuSelect.dataset.playerId = player.id;
         seikakuSelect.dataset.field = 'seikaku';
-        const personalities = ['性格を選択', '天才肌', 'ごくふつう', '内気', 'したたか', 'クール', 'お調子者', 'やんちゃ', '熱血漢'];
+        const personalities = ['性格', '天才肌', 'ごくふつう', '内気', 'したたか', 'クール', 'お調子者', 'やんちゃ', '熱血漢'];
         personalities.forEach(seikaku => {
             const option = document.createElement('option');
             option.value = seikaku;
-            option.textContent = seikaku === '性格を選択' ? '性格を選択' : seikaku;
+            option.textContent = seikaku === '性格' ? '性格' : seikaku;
             if (player.seikaku === seikaku) {
                 option.selected = true;
             }
@@ -268,7 +268,7 @@ function createPlayerRow(player) {
         ['', '投手', '捕手', '一塁手', '二塁手', '三塁手', '遊撃手', '外野手'].forEach(pos => {
             const option = document.createElement('option');
             option.value = pos;
-            option.textContent = pos === '' ? '選択' : pos;
+            option.textContent = pos === '' ? 'なし' : pos;
             if (player.positions[1] === pos) {
                 option.selected = true;
             }

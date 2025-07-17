@@ -3,6 +3,7 @@
 import { getUIElements } from './ui.js';
 import { addPlayer } from './firestore.js';
 import { currentUser } from './auth.js';
+import { transGrade, applyGradeColor } from './viewPlayer.js'; // Import the functions
 
 let regYearInput;
 let regNameInput;
@@ -22,6 +23,29 @@ let regseikakuInput;
 let regButton;
 let clearButton;
 
+// References to the new span elements for displaying grades
+let regThrowGradeSpan;
+let regDandouGradeSpan;
+let regMeetGradeSpan;
+let regPowerGradeSpan;
+let regSpeedGradeSpan;
+let regArmGradeSpan;
+let regDefenseGradeSpan;
+let regCatchGradeSpan;
+
+/**
+ * Updates the grade display for a given input element and its corresponding span.
+ * @param {HTMLInputElement} inputElement - The input field for the stat.
+ * @param {HTMLElement} gradeSpanElement - The span element to display the grade.
+ * @param {string} statType - The type of stat (e.g., 'throwing', 'meet').
+ */
+function updateRegGradeDisplay(inputElement, gradeSpanElement, statType) {
+    const value = parseInt(inputElement.value);
+    const grade = transGrade(statType, value);
+    gradeSpanElement.textContent = grade;
+    applyGradeColor(gradeSpanElement, statType, grade);
+}
+
 /**
  * 登録フォームの入力フィールドをすべてクリアする関数
  */
@@ -40,7 +64,44 @@ export function clearRegForm() {
     regDefenseInput.value = '';
     regCatchInput.value = '';
     regMemoInput.value = '';
-    regseikakuInput.value = '性格を選択';
+    regseikakuInput.value = '性格';
+    highlightEmptyFields(); // クリア後にもハイライトを更新
+
+    // Clear grade displays and remove colors
+    updateRegGradeDisplay(regThrowInput, regThrowGradeSpan, 'throwing');
+    updateRegGradeDisplay(regDandouInput, regDandouGradeSpan, 'dandou');
+    updateRegGradeDisplay(regMeetInput, regMeetGradeSpan, 'meet');
+    updateRegGradeDisplay(regPowerInput, regPowerGradeSpan, 'power');
+    updateRegGradeDisplay(regSpeedInput, regSpeedGradeSpan, 'speed');
+    updateRegGradeDisplay(regArmInput, regArmGradeSpan, 'armStrength');
+    updateRegGradeDisplay(regDefenseInput, regDefenseGradeSpan, 'defense');
+    updateRegGradeDisplay(regCatchInput, regCatchGradeSpan, 'catching');
+}
+
+// 登録フォームの入力フィールドに値が入力されたときに、未入力があったら登録行のinputタグの背景色をすべて赤くする関数
+export function highlightEmptyFields() {
+    const inputs = [
+        regYearInput,
+        regNameInput,
+        regPosi1Input,
+        regThrowInput,
+        regDandouInput,
+        regMeetInput,
+        regPowerInput,
+        regSpeedInput,
+        regArmInput,
+        regDefenseInput,
+        regCatchInput,
+        regseikakuInput
+    ];
+
+    inputs.forEach(input => {
+        if (!input.value || (input === regseikakuInput && input.value === '性格') || (input.type === 'number' && isNaN(parseInt(input.value)))) {
+            input.style.backgroundColor = '#FFDDDD'; // 赤色にハイライト
+        } else {
+            input.style.backgroundColor = ''; // ハイライト解除
+        }
+    });
 }
 
 /**
@@ -54,6 +115,9 @@ async function handleRegSubmit(event) {
         alert('選手を登録するにはログインが必要です。');
         return;
     }
+
+    // 登録ボタンクリック時にも強制的にハイライト処理を実行し、最新の状態を反映
+    highlightEmptyFields();
 
     const enrollmentYear = parseInt(regYearInput.value);
     const name = regNameInput.value;
@@ -71,89 +135,23 @@ async function handleRegSubmit(event) {
     const memo = regMemoInput.value;
     const seikaku = regseikakuInput.value;
 
-    // 必須項目チェック
+    // 必須項目チェック（アラートメッセージ用）
     let errorMessage = '必須項目を入力してください（';
     let errorCount = 0;
 
-    if(!name) {  // 選手名が未入力の場合、赤色にハイライト
-        regNameInput.style.backgroundColor = '#FFDDDD';
-        errorMessage += '選手名';
-        errorCount++;
-    } else { regNameInput.style.backgroundColor = ''; }
+    if(!name) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '選手名'; }
+    if(isNaN(enrollmentYear)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '入学年'; }
+    if(!position1) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += 'メインポジション'; }
+    if(isNaN(throwing)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '送球'; }
+    if(isNaN(dandou)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '弾道'; }
+    if(isNaN(meet)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += 'ミート'; }
+    if(isNaN(power)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += 'パワー'; }
+    if(isNaN(speed)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '走力'; }
+    if(isNaN(armStrength)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '肩力'; }
+    if(isNaN(defense)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '守備力'; }
+    if(isNaN(catching)) { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '捕球'; }
+    if(!seikaku || seikaku == '性格') { errorCount++; if (errorCount > 1) errorMessage += '、'; errorMessage += '性格'; }
 
-    if(isNaN(enrollmentYear)) {  // 入学年が未入力または不正な場合、赤色にハイライト
-        regYearInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += '入学年';
-        errorCount++;
-    } else { regYearInput.style.backgroundColor = ''; }
-
-    if(!position1) {  // 守備位置1が未選択の場合、赤色にハイライト
-        regPosi1Input.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += 'メインポジション';
-        errorCount++;
-    } else { regPosi1Input.style.backgroundColor = ''; }
-    
-    if(isNaN(throwing)) {  // 送球が未入力または不正な場合、赤色にハイライト
-        regThrowInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += '送球';
-        errorCount++;
-    } else { regThrowInput.style.backgroundColor = ''; }
-
-    if(isNaN(dandou)) {  // 弾道が未入力または不正な場合、赤色にハイライト
-         regDandouInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += '弾道';
-        errorCount++;
-    } else { regDandouInput.style.backgroundColor = ''; }
-
-    if(isNaN(meet)) {  // ミートが未入力または不正な場合、赤色にハイライト
-        regMeetInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += 'ミート';
-        errorCount++;
-    } else { regMeetInput.style.backgroundColor = ''; }
-
-    if(isNaN(power)) {  // パワーが未入力または不正な場合、赤色にハイライト
-        regPowerInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += 'パワー';
-        errorCount++;
-    } else { regPowerInput.style.backgroundColor = ''; }
-
-    if(isNaN(speed)) {  // 走力が未入力または不正な場合、赤色にハイライト
-        regSpeedInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += '走力';
-        errorCount++;
-    } else { regSpeedInput.style.backgroundColor = ''; }
-
-    if(isNaN(armStrength)) {  // 肩力が未入力または不正な場合、赤色にハイライト
-        regArmInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += '肩力';
-        errorCount++;
-    } else { regArmInput.style.backgroundColor = ''; }
-
-    if(isNaN(defense)) {  // 守備力が未入力または不正な場合、赤色にハイライト
-        regDefenseInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += '守備力';
-        errorCount++;
-    } else { regDefenseInput.style.backgroundColor = ''; }
-
-    if(isNaN(catching)) {  // 捕球が未入力または不正な場合、赤色にハイライト
-        regCatchInput.style.backgroundColor = '#FFDDDD';
-        if (errorCount > 0) { errorMessage += '、'; } // 既にエラーがある場合はカンマを追加
-        errorMessage += '捕球';
-        errorCount++;
-    } else { regCatchInput.style.backgroundColor = ''; }
-
-    if(!seikaku || seikaku == '性格を選択') {  // 性格が未選択の場合、赤色にハイライト
-        regseikakuInput.style.backgroundColor = '#FFDDDD';
-    } else { regseikakuInput.style.backgroundColor = ''; }
 
     // エラーがあった場合はアラートを表示し、処理を中断
     if (errorCount > 0) {
@@ -205,6 +203,65 @@ export function initRegistFormListeners() {
     regButton = elements.regButton;
     clearButton = elements.clearButton;
 
+    // Get references to the new grade display spans
+    regThrowGradeSpan = document.querySelector('#regist-row td:nth-child(4) .grade-display');
+    regDandouGradeSpan = document.querySelector('#regist-row td:nth-child(5) .grade-display');
+    regMeetGradeSpan = document.querySelector('#regist-row td:nth-child(6) .grade-display');
+    regPowerGradeSpan = document.querySelector('#regist-row td:nth-child(7) .grade-display');
+    regSpeedGradeSpan = document.querySelector('#regist-row td:nth-child(8) .grade-display');
+    regArmGradeSpan = document.querySelector('#regist-row td:nth-child(9) .grade-display');
+    regDefenseGradeSpan = document.querySelector('#regist-row td:nth-child(10) .grade-display');
+    regCatchGradeSpan = document.querySelector('#regist-row td:nth-child(11) .grade-display');
+
+    // Attach event listeners for grade display updates
+    regThrowInput.addEventListener('input', () => updateRegGradeDisplay(regThrowInput, regThrowGradeSpan, 'throwing'));
+    regDandouInput.addEventListener('input', () => updateRegGradeDisplay(regDandouInput, regDandouGradeSpan, 'dandou'));
+    regMeetInput.addEventListener('input', () => updateRegGradeDisplay(regMeetInput, regMeetGradeSpan, 'meet'));
+    regPowerInput.addEventListener('input', () => updateRegGradeDisplay(regPowerInput, regPowerGradeSpan, 'power'));
+    regSpeedInput.addEventListener('input', () => updateRegGradeDisplay(regSpeedInput, regSpeedGradeSpan, 'speed'));
+    regArmInput.addEventListener('input', () => updateRegGradeDisplay(regArmInput, regArmGradeSpan, 'armStrength'));
+    regDefenseInput.addEventListener('input', () => updateRegGradeDisplay(regDefenseInput, regDefenseGradeSpan, 'defense'));
+    regCatchInput.addEventListener('input', () => updateRegGradeDisplay(regCatchInput, regCatchGradeSpan, 'catching'));
+
+    // Initialize the grade displays on load
+    updateRegGradeDisplay(regThrowInput, regThrowGradeSpan, 'throwing');
+    updateRegGradeDisplay(regDandouInput, regDandouGradeSpan, 'dandou');
+    updateRegGradeDisplay(regMeetInput, regMeetGradeSpan, 'meet');
+    updateRegGradeDisplay(regPowerInput, regPowerGradeSpan, 'power');
+    updateRegGradeDisplay(regSpeedInput, regSpeedGradeSpan, 'speed');
+    updateRegGradeDisplay(regArmInput, regArmGradeSpan, 'armStrength');
+    updateRegGradeDisplay(regDefenseInput, regDefenseGradeSpan, 'defense');
+    updateRegGradeDisplay(regCatchInput, regCatchGradeSpan, 'catching');
+
+    // 各入力フィールドに 'input' イベントリスナーを追加
+    const inputsToMonitor = [
+        regYearInput,
+        regNameInput,
+        regPosi1Input,
+        regPosi2Input,
+        regPosi3Input,
+        regThrowInput,
+        regDandouInput,
+        regMeetInput,
+        regPowerInput,
+        regSpeedInput,
+        regArmInput,
+        regDefenseInput,
+        regCatchInput,
+        regseikakuInput
+    ];
+
+    inputsToMonitor.forEach(input => {
+        input.addEventListener('input', highlightEmptyFields);
+        // select要素の場合は 'change' イベントもリッスンする
+        if (input.tagName === 'SELECT') {
+            input.addEventListener('change', highlightEmptyFields);
+        }
+    });
+
     regButton.addEventListener('click', handleRegSubmit);
     clearButton.addEventListener('click', clearRegForm);
+
+    // 初期ロード時に一度ハイライトを適用
+    highlightEmptyFields();
 }
