@@ -150,14 +150,41 @@ function createpitStats(player) {
             <div class="pit-stat1">
                 <div>
                     <label>球速:</label>
-                    <input type="number" min="100" max="180" value="${pitSpeed}" data-field="pitSpeed"> km/h
+                    <select data-field="pitSpeed">
+                        ${(() => {
+                            let optionsHtml = '';
+                            for (let i = 100; i <= 180; i++) {
+                                optionsHtml += `<option value="${i}" ${pitSpeed == i ? 'selected' : ''}>${i}</option>`;
+                            }
+                            return optionsHtml;
+                        })()}
+                    </select> km/h
                 </div>
                 <div>
                     <label>コントロール:</label>
-                    <input type="number" min="1" max="100" value="${control}" data-field="control"> <span class="grade-display grade-${controlGrade}">${controlGrade}</span>
+                    <select data-field="control">
+                        ${(() => {
+                            let optionsHtml = '';
+                            for (let i = 1; i <= 100; i++) {
+                                optionsHtml += `<option value="${i}" ${control == i ? 'selected' : ''}>${i}</option>`;
+                            }
+                            return optionsHtml;
+                        })()}
+                    </select>
+                    <span class="grade-display grade-${controlGrade}">${controlGrade}</span>
                 </div>
                 <div>
-                    <label>スタミナ:</label><input type="number" min="1" max="100" value="${stamina}" data-field="stamina"> <span class="grade-display grade-${staminaGrade}">${staminaGrade}</span>
+                    <label>スタミナ:</label>
+                    <select data-field="stamina">
+                        ${(() => {
+                            let optionsHtml = '';
+                            for (let i = 1; i <= 100; i++) {
+                                optionsHtml += `<option value="${i}" ${stamina == i ? 'selected' : ''}>${i}</option>`;
+                            }
+                            return optionsHtml;
+                        })()}
+                    </select>
+                    <span class="grade-display grade-${staminaGrade}">${staminaGrade}</span>
                 </div>
             </div>
             <div class="pit-stat2">
@@ -336,45 +363,55 @@ function createPlayerRow(player) {
         if (currentUser) {
             const gradeSpan = document.createElement('span');
             gradeSpan.classList.add('grade-display');
-            const grade = transGrade(stat.field, stat.value);
-            gradeSpan.textContent = grade;
-            applyGradeColor(gradeSpan, stat.field, grade);
             cell.appendChild(gradeSpan);
 
-            const inputContainer = document.createElement('div');
-            inputContainer.classList.add('input-set');
+            const selectElement = document.createElement('select');
+            selectElement.dataset.playerId = player.id;
+            selectElement.dataset.field = stat.field;
+            selectElement.classList.add('edit-select'); // 新しいクラス名を追加
 
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.value = stat.value;
-            input.dataset.playerId = player.id;
-            input.dataset.field = stat.field;
-            input.classList.add('edit-input');
+            let options = [];
+            if (stat.field === 'throwing') {
+                options = ['G', 'F', 'E', 'D', 'C', 'B', 'A', 'S'];
+                options.forEach((grade, index) => {
+                    const option = document.createElement('option');
+                    option.value = index; // 数値で保存
+                    option.textContent = grade;
+                    if (stat.value === index) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                });
+            } else if (stat.field === 'dandou') {
+                for (let i = 1; i <= 4; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    if (stat.value === i) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                }
+            } else { // meet, power, speed, armStrength, defense, catching
+                for (let i = 1; i <= 100; i++) { // 1から100までのオプション
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    if (stat.value === i) {
+                        option.selected = true;
+                    }
+                    selectElement.appendChild(option);
+                }
+            }
+            
+            cell.appendChild(selectElement);
 
-            const decreBtn = document.createElement('button');
-            decreBtn.textContent = '-';
-            decreBtn.classList.add('decrease-btn');
-            decreBtn.addEventListener('click', () => {
-                input.stepDown();
-                input.dispatchEvent(new Event('change'));
-            });
+            // 初期表示時のグレードを適用
+            const initialGrade = transGrade(stat.field, stat.value);
+            gradeSpan.textContent = initialGrade;
+            applyGradeColor(gradeSpan, stat.field, initialGrade);
 
-            const increBtn = document.createElement('button');
-            increBtn.textContent = '+';
-            increBtn.classList.add('increase-btn');
-            increBtn.addEventListener('click', () => {
-                input.stepUp();
-                input.dispatchEvent(new Event('change'));
-            });
-
-            inputContainer.appendChild(decreBtn);
-            inputContainer.appendChild(input);
-            inputContainer.appendChild(increBtn);
-            cell.appendChild(inputContainer);
-
-            let inputTypingTimer;
-            input.addEventListener('change', async (e) => {
-                clearTimeout(inputTypingTimer);
+            selectElement.addEventListener('change', async (e) => {
                 const updatedValue = parseInt(e.target.value);
                 const playerId = e.target.dataset.playerId;
                 const field = e.target.dataset.field;
@@ -383,10 +420,9 @@ function createPlayerRow(player) {
                 gradeSpan.textContent = newGrade;
                 applyGradeColor(gradeSpan, field, newGrade);
                 
-                inputTypingTimer = setTimeout( async() => {
-                    const updatedData = { [field]: updatedValue };
-                    await updatePlayer(playerId, updatedData, player.name);
-                }, 400); 
+                // Firestoreの更新はchangeイベントで直接行う
+                const updatedData = { [field]: updatedValue };
+                await updatePlayer(playerId, updatedData, player.name);
             });
         } else {
             const gradeSpan = document.createElement('span');
