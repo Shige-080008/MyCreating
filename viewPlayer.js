@@ -153,7 +153,7 @@ function createpitStats(player) {
                     <select data-field="pitSpeed">
                         ${(() => {
                             let optionsHtml = '';
-                            for (let i = 100; i <= 180; i++) {
+                            for (let i = 180; i >= 100; i--) {
                                 optionsHtml += `<option value="${i}" ${pitSpeed == i ? 'selected' : ''}>${i}</option>`;
                             }
                             return optionsHtml;

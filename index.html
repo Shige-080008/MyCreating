@@ -60,7 +60,7 @@
                     </td>
                     <td class="position-inputs">
                         <select id="rgstInput-posi1" class="rgstInput-posi" placelolder="メイン">
-                            <option value="">選択</option>
+                            <option value="">メイン</option>
                             <option value="投手">投手</option>
                             <option value="捕手">捕手</option>
                             <option value="一塁手">一塁手</option>
@@ -70,7 +70,7 @@
                             <option value="外野手">外野手</option>
                         </select>
                         <select id="rgstInput-posi2" class="rgstInput-posi">
-                            <option value="">なし</option>
+                            <option value="">サブ１</option>
                             <option value="投手">投手</option>
                             <option value="捕手">捕手</option>
                             <option value="一塁手">一塁手</option>
@@ -80,7 +80,7 @@
                             <option value="外野手">外野手</option>
                         </select>
                         <select id="rgstInput-posi3" class="rgstInput-posi">
-                            <option value="">なし</option>
+                            <option value="">サブ２</option>
                             <option value="投手">投手</option>
                             <option value="捕手">捕手</option>
                             <option value="一塁手">一塁手</option>
@@ -93,31 +93,32 @@
                     <td>
                         <span class="grade-display" data-stat-type="throwing"></span>
                         <select id="rgstInput-throw" required>
-                            <option value="">選択</option>
-                            <option value="0">G</option>
-                            <option value="1">F</option>
-                            <option value="2">E</option>
-                            <option value="3">D</option>
-                            <option value="4">C</option>
-                            <option value="5">B</option>
-                            <option value="6">A</option>
+                            <option value="">送</option>
                             <option value="7">S</option>
+                            <option value="6">A</option>
+                            <option value="5">B</option>
+                            <option value="4">C</option>
+                            <option value="3">D</option>
+                            <option value="2">E</option>
+                            <option value="1">F</option>
+                            <option value="0">G</option>
                         </select>
                     </td>
                     <td>
                         <span class="grade-display" data-stat-type="dandou"></span>
                         <select id="rgstInput-dandou" required>
-                            <option value="">選択</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
+                            <option value="">弾</option>
+                            <script>
+                                for (let i = 4; i >= 1; i--) {
+                                    document.write('<option value="' + i + '">' + i + '</option>');
+                                }
+                            </script>
                         </select>
                     </td>
                     <td>
                         <span class="grade-display" data-stat-type="meet"></span>
                         <select id="rgstInput-meet" required>
-                            <option value="">選択</option>
+                            <option value="">ミ</option>
                             <script>
                                 for (let i = 100; i >= 1; i--) {
                                     document.write('<option value="' + i + '">' + i + '</option>');
@@ -128,7 +129,7 @@
                     <td>
                         <span class="grade-display" data-stat-type="power"></span>
                         <select id="rgstInput-power" required>
-                            <option value="">選択</option>
+                            <option value="">パ</option>
                             <script>
                                 for (let i = 100; i >= 1; i--) {
                                     document.write('<option value="' + i + '">' + i + '</option>');
@@ -139,7 +140,7 @@
                     <td>
                         <span class="grade-display" data-stat-type="speed"></span>
                         <select id="rgstInput-speed" required>
-                            <option value="">選択</option>
+                            <option value="">走</option>
                             <script>
                                 for (let i = 100; i >= 1; i--) {
                                     document.write('<option value="' + i + '">' + i + '</option>');
@@ -150,7 +151,7 @@
                     <td>
                         <span class="grade-display" data-stat-type="armStrength"></span>
                         <select id="rgstInput-arm" required>
-                            <option value="">選択</option>
+                            <option value="">肩</option>
                             <script>
                                 for (let i = 100; i >= 1; i--) {
                                     document.write('<option value="' + i + '">' + i + '</option>');
@@ -161,7 +162,7 @@
                     <td>
                         <span class="grade-display" data-stat-type="defense"></span>
                         <select id="rgstInput-defense" required>
-                            <option value="">選択</option>
+                            <option value="">守</option>
                             <script>
                                 for (let i = 100; i >= 1; i--) {
                                     document.write('<option value="' + i + '">' + i + '</option>');
@@ -172,7 +173,7 @@
                     <td>
                         <span class="grade-display" data-stat-type="catching"></span>
                         <select id="rgstInput-catch" required>
-                            <option value="">選択</option>
+                            <option value="">捕</option>
                             <script>
                                 for (let i = 100; i >= 1; i--) {
                                     document.write('<option value="' + i + '">' + i + '</option>');

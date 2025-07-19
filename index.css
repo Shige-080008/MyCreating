@@ -40,7 +40,7 @@ tbody td { border-left: 0.5px dotted #b1b1b1; }
     width: 30px; /* 幅を調整 */
     text-align: center; /* 中央揃え */
     padding: 3px; /* 内側の余白 */
-    font-size: 18px; /* フォントサイズ */
+    font-size: 15px; /* フォントサイズ */
     border: 1px solid #ddd; /* ボーダー */
     border-radius: 3px; /* 角を丸く */
 }
@@ -61,17 +61,15 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* メモ入力欄のスタイル */
 .list-player textarea {
-    /*width: 100%; /* 幅を100%に */
     height: 70px; /* 高さを調整 */
-    font-size: 16px; /* フォントサイズ */
+    font-size: 15px; /* フォントサイズ */
     border-style: none; /* ボーダーなし */
-    /* 文字列に下線を引く */
     text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
 }
 #rgstInput-memo{
     width: 350px; /* 幅を100%に */
     height: 70px; /* 高さを調整 */
-    font-size: 16px; /* フォントサイズ */
+    font-size: 15px; /* フォントサイズ */
     border-style: none; /* ボーダーなし */
     /* 文字列に下線を引く */
     text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
@@ -94,9 +92,10 @@ input[type="number"]::-webkit-inner-spin-button {
     font-weight: bold; /* 太字 */
 }
 .name-text {
-    font-size: 25px; /* 選手名のフォントサイズ */
-    height: 25px; /* 高さを調整 */
-    line-height: 20px; /* 行の高さを調整 */
+    font-size: 23px; /* 選手名のフォントサイズ */
+    height: 20px; /* 高さを調整 */
+    margin-top: 5px;
+    line-height: 50px; /* 行の高さを調整 */
 }
 
 /* 選手名のフォントサイズ */
@@ -115,11 +114,9 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .data-cell {
     text-align: center; /* 中央揃え */
-    font-weight: bold; /* 太字 */
-    width: 60px; /* 幅を設定 */
 }
 .data-cell select {
-    font-size: 20px;
+    font-size: 15px;
     width: 50px; /* 幅を設定 */
     text-align: center; /* 中央揃え */
 
@@ -137,14 +134,18 @@ input[type="number"]::-webkit-inner-spin-button {
     background-color: #fff; /* 背景色 */
 }
 #regist-row select {
-    font-size: 20px;
+    font-size: 15px;
     text-align: center; /* 中央揃え */
     margin-left: 10px;
     margin-right: 10px;
 }
 /* 登録行のボタンのスタイル */
 .Buttons_regist button {
-    margin-left: 5px; /* 左側の余白 */
+    margin-left: 10px; /* 左側の余白 */
+    margin-bottom: 5px; /* 左側の余白 */
+    width: 65px; /* ボタンの幅を100%に */
+    display: flex; /* Flexboxを使用 */
+    flex-direction: column; /* 縦方向に配置 */
     padding: 5px 10px; /* 内側の余白 */
     font-size: 14px; /* フォントサイズ */
     cursor: pointer; /* カーソルをポインターに */
@@ -164,23 +165,31 @@ input[type="number"]::-webkit-inner-spin-button {
     border: none; /* ボーダーなし */
 }
 
+.action-cell {
+    display: flex;
+    flex-direction: column; /* 横方向に配置 */
+}
+
+.action-cell button {
+    width: 65px; /* ボタンの幅を100%に */
+    margin-left: 10px; /* 左側の余白 */
+    margin-bottom: 5px; /* 左側の余白 */
+    padding: 5px 10px; /* 内側の余白 */
+}
+
 /* 更新ボタンのスタイル */
 .update-btn {
-    margin-left: 5px; /* 左側の余白 */
-    padding: 5px 10px; /* 内側の余白 */
-    font-size: 14px; /* フォントサイズ */
+    
+    font-size: 15px; /* フォントサイズ */
     cursor: pointer; /* カーソルをポインターに */
     border-radius: 3px; /* 角を丸く */
     background-color: #4285F4; /* 青 */
     color: white; /* 文字色 */
     border: none; /* ボーダーなし */
-    margin-bottom: 5px; /* 下側の余白 */
 }
 /* 卒業ボタンのスタイル */
 .delete-btn {
-    margin-left: 5px; /* 左側の余白 */
-    padding: 5px 10px; /* 内側の余白 */
-    font-size: 14px; /* フォントサイズ */
+    font-size: 15px; /* フォントサイズ */
     cursor: pointer; /* カーソルをポインターに */
     border-radius: 3px; /* 角を丸く */
     background-color: #f44336; /* 赤 */
@@ -250,19 +259,6 @@ input[type="number"]::-webkit-inner-spin-button {
 .grade-throwing-A { color: #1499db; }
 .grade-throwing-S { color: #dbba14; }
 
-/* 数値入力ボタンのスタイル */
-.input-set {
-    display: flex;
-    justify-content: center;
-}
-
-.input-set button {
-    background-color: #eee; /* 背景色 */
-    border: 1px solid #ccc; /* ボーダー */
-    height: 30px; /* 高さを入力フィールドに合わせる */
-
-}
-
 .input-set input[type="number"] {
     height: 30px; /* 高さをボタンに合わせる */
     box-sizing: border-box; /* パディングとボーダーを幅に含める */
@@ -274,11 +270,11 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* 各列の最小・最大幅を設定 */
-.grade-width{ min-width: 112px; max-width: 112px;}
-.name-width { min-width: 97px; max-width: 117px;}
+.grade-width{ min-width: 92px; max-width: 92px;}
+.name-width { min-width: 87px; max-width: 117px;}
 .memo-width { min-width: 277px; max-width: 277px;}
-.state-width{ min-width: 77px; max-width: 117px;}
-.button-width { min-width: 127px; max-width: 127px;}
+.state-width{ min-width: 57px; max-width: 57px;}
+.button-width { min-width: 90px; max-width: 90px;}
 .position-width { min-width: 72px; max-width: 90px; }
 .pitbutton-width { min-width: 80px; max-width: 80px; }
 
@@ -286,7 +282,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .position-inputs select {
     margin-bottom: 2px; /* 下側の余白 */
     padding: 3px; /* 内側の余白 */
-    font-size: 16px; /* フォントサイズ */
+    font-size: 10px; /* フォントサイズ */
     box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
 
@@ -320,12 +316,14 @@ input[type="number"]::-webkit-inner-spin-button {
     display: flex; /* Flexboxを使用 */
     flex-direction: column; /* 縦方向に配置 */
     gap: 2px; /* 要素間の間隔 */
+    margin-left: 10px; /* 左側の余白 */
+    margin-right: 10px; /* 右側の余白 */
 }
 
 /* 守備位置選択入力のスタイル */
 .input-position {
     padding: 3px; /* 内側の余白 */
-    font-size: 16px; /* フォントサイズ */
+    font-size: 15px; /* フォントサイズ */
     border: 1px solid #ccc; /* ボーダー */
     border-radius: 3px; /* 角を丸く */
 }
@@ -368,24 +366,24 @@ input[type="number"]::-webkit-inner-spin-button {
     background-color: #9bff74ab !important; /* 薄い黄色 */
 }
 #rgstInput-name{
-    width: 97px;
+    width: 93px;
     display: flex; /* Flexboxを使用 */
     flex-direction: column; /* 縦方向に配置 */
+    margin-left:10px; /* 左側の余白 */
 }
 
 .input-seikaku {
     font-size: 15px;
-    width: 100%; /* 幅を設定 */
     text-align: center; /* 中央揃え */
+    width: 100px; /* 幅を設定 */
+    margin-left: 10px; /* 左側の余白 */
+    margin-right: 10px; /* 右側の余白 */
+    margin-bottom: 10px; /* 下側の余白 */
 }
 
 .rgstInput-seikaku {
-    width: 97px; /* 幅を調整 */
-    height: 30px; /* 高さを調整 */
-    font-size: 20px; /* フォントサイズ */
+    width: 101px; /* 幅を設定 */
     border: 1px solid #ccc; /* ボーダー */
     border-radius: 3px; /* 角を丸く */
-    padding: 3px; /* 内側の余白 */
     box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
-
