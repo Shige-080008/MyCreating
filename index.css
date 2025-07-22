@@ -1,15 +1,33 @@
-/* テーブル全体のスタイル */
+/* テーブル全体に反映させるスタイル */
 .list-player table {
     border-collapse: collapse; /* ボーダーを結合 */
-    width: auto; /* テーブルの幅を内容に合わせる */
     border: 1px solid #000000; /* ボーダーの色と太さ */
 }
-thread { border: 1px solid #000000; }
-thread th { border-right: 0.5px dotted #b1b1b1; }
 tbody tr{ 
     border-left: 1px solid #000000;
     border-top: 0.5px solid #b1b1b1;
 }
+
+/* select要素のスタイル */
+.list-player select {
+    font-size: 15px; /* フォントサイズ */
+    height: auto;
+    border-radius: 20px;
+    text-align: center; /* 中央揃え */
+    padding: 3px; /* 内側の余白 */
+    border: 1px solid #ccc;
+}
+
+.list-player button {
+    width: 65px; /* ボタンの幅を100%に */
+    font-weight: bold; /* 太字 */
+    padding: 5px 10px; /* 内側の余白 */
+    font-size: 15px; /* フォントサイズ */
+    border-radius: 20px; /* 角を丸く */
+    border: none; /* ボーダーなし */
+    color: white; /* 文字色 */
+}
+
 tbody td { border-left: 0.5px dotted #b1b1b1; }
 /* テーブルヘッダーとセルの共通スタイル */
 .list-player th{
@@ -17,43 +35,39 @@ tbody td { border-left: 0.5px dotted #b1b1b1; }
     font-size: 20px;
     position: sticky;
     top: 0;
-    left: 0;
     border-left: 0.5px dotted #b1b1b1;
     border-bottom: 1px solid #000000;
     background-color: #f2f2f2; /* 背景色 */
+    border-right: 0.5px dotted #b1b1b1;
 }
-/* 学年表示のスタイル */
-.data-grade {
-    font-weight: bold; /* 太字 */
-    font-size: 24px; /* 学年を大きく */
-    margin: 0px; /* 余白をなくす */
+
+/* ----------学年表示のスタイル---------- */
+.grade-width{ min-width: 92px; max-width: 92px;} /* 学年の幅を設定 */
+.data-grade, .data-year, #rgstInput-year {
+    text-align: center;
+    font-weight: bold;
+    margin: 0px 10px;
 }
-/* 入学年表示のスタイル */
-.data-year {
-    text-align: center; /* 中央揃え */
-    font-weight: bold; /* 太字 */
-    margin: 0px; /* 余白をなくす */
-}
-/* テーブル内の数値・テキスト入力フィールドのスタイル */
+.data-grade { font-size: 25px; } /* 「〇年生」のフォントサイズだけ大きく */
+
+/*値・テキスト入力フィールドのスタイル */
 .list-player input[type="number"],
 .list-player input[type="text"] {
-    width: 30px; /* 幅を調整 */
-    text-align: center; /* 中央揃え */
     padding: 3px; /* 内側の余白 */
     font-size: 15px; /* フォントサイズ */
     border: 1px solid #ddd; /* ボーダー */
     border-radius: 3px; /* 角を丸く */
 }
 
-/* input type="number" のスピンボタン（増減ボタン）を非表示にする */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+#rgstInput-name{
+    text-align: center; /* 中央揃え */
+    width: 93px;
+    display: flex; /* Flexboxを使用 */
+    flex-direction: column; /* 縦方向に配置 */
+    margin-left:10px; /* 左側の余白 */
+    margin-bottom: 5px;
 }
-.input-set input[type="number"]{
-    width: 40px; /* 幅を調整 */
-}
+
 
 .edit-textarea{
     width: 350px;
@@ -62,13 +76,14 @@ input[type="number"]::-webkit-inner-spin-button {
 /* メモ入力欄のスタイル */
 .list-player textarea {
     height: 70px; /* 高さを調整 */
+    height: 80px; /* 高さを調整 */
     font-size: 15px; /* フォントサイズ */
     border-style: none; /* ボーダーなし */
     text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
 }
 #rgstInput-memo{
     width: 350px; /* 幅を100%に */
-    height: 70px; /* 高さを調整 */
+    height: 80px; /* 高さを調整 */
     font-size: 15px; /* フォントサイズ */
     border-style: none; /* ボーダーなし */
     /* 文字列に下線を引く */
@@ -87,10 +102,7 @@ input[type="number"]::-webkit-inner-spin-button {
     width: 100%; /* 幅を100%に */
 }
 
-.grade-cell {
-    text-align: center; /* 中央揃え */
-    font-weight: bold; /* 太字 */
-}
+
 .name-text {
     font-size: 23px; /* 選手名のフォントサイズ */
     height: 20px; /* 高さを調整 */
@@ -102,25 +114,20 @@ input[type="number"]::-webkit-inner-spin-button {
 .name-cell {
     font-weight: bold; /* 太字 */
     text-align: center; /* 中央揃え */
-    display: flex; /* Flexboxを使用 */
-    flex-direction: column; /* 縦方向に配置 */    
+    padding-left: 5px; /* 内側の余白 */
 }
 
 .position-cell {
     text-align: center; /* 中央揃え */
-    font-weight: bold; /* 太字 */
-    width: 80px; /* 幅を設定 */
 }
 
 .data-cell {
     text-align: center; /* 中央揃え */
 }
 .data-cell select {
-    font-size: 15px;
     width: 50px; /* 幅を設定 */
-    text-align: center; /* 中央揃え */
-
 }
+
 
 /* 登録行のスタイル */
 #regist-row {
@@ -133,74 +140,31 @@ input[type="number"]::-webkit-inner-spin-button {
 #regist-row select {
     background-color: #fff; /* 背景色 */
 }
-#regist-row select {
-    font-size: 15px;
-    text-align: center; /* 中央揃え */
-    margin-left: 10px;
-    margin-right: 10px;
-}
-/* 登録行のボタンのスタイル */
-.Buttons_regist button {
+
+/* 登録行：ボタン共通スタイル */
+.Buttons_regist .register-btn,.clear-btn {
     margin-left: 10px; /* 左側の余白 */
-    margin-bottom: 5px; /* 左側の余白 */
-    width: 65px; /* ボタンの幅を100%に */
     display: flex; /* Flexboxを使用 */
     flex-direction: column; /* 縦方向に配置 */
-    padding: 5px 10px; /* 内側の余白 */
-    font-size: 14px; /* フォントサイズ */
-    cursor: pointer; /* カーソルをポインターに */
-    border-radius: 3px; /* 角を丸く */
 }
-/* 登録ボタンのスタイル */
+/* 登録行：登録ボタン固有 */
 .Buttons_regist .register-btn {
     background-color: #4CAF50; /* 緑 */
-    color: white; /* 文字色 */
-    border: none; /* ボーダーなし */
     margin-bottom: 5px; /* 下側の余白 */
 }
-/* クリアボタンのスタイル */
-.Buttons_regist .clear-btn {
-    background-color: #888; /* グレー */
-    color: white; /* 文字色 */
-    border: none; /* ボーダーなし */
-}
+/* 登録行：クリアボタン固有 */
+.Buttons_regist .clear-btn { background-color: #888; /* グレー */ }
 
-.action-cell {
+/* 選手行：ボタン共通スタイル */
+.action-cell .update-btn, .delete-btn {
     display: flex;
     flex-direction: column; /* 横方向に配置 */
-}
-
-.action-cell button {
-    width: 65px; /* ボタンの幅を100%に */
     margin-left: 10px; /* 左側の余白 */
-    margin-bottom: 5px; /* 左側の余白 */
-    padding: 5px 10px; /* 内側の余白 */
 }
+.update-btn{ background-color: #4285F4; margin-bottom: 5px;} /* 更新ボタンのスタイル */
+.delete-btn { background-color: #f44336; } /* 卒業ボタンのスタイル */
 
-/* 更新ボタンのスタイル */
-.update-btn {
-    
-    font-size: 15px; /* フォントサイズ */
-    cursor: pointer; /* カーソルをポインターに */
-    border-radius: 3px; /* 角を丸く */
-    background-color: #4285F4; /* 青 */
-    color: white; /* 文字色 */
-    border: none; /* ボーダーなし */
-}
-/* 卒業ボタンのスタイル */
-.delete-btn {
-    font-size: 15px; /* フォントサイズ */
-    cursor: pointer; /* カーソルをポインターに */
-    border-radius: 3px; /* 角を丸く */
-    background-color: #f44336; /* 赤 */
-    color: white; /* 文字色 */
-    border: none; /* ボーダーなし */
-}
-/* 認証状態表示のスタイル */
-#auth-state {
-    margin-bottom: 10px; /* 下側の余白 */
-    font-weight: bold; /* 太字 */
-}
+
 /* 認証ボタンのスタイル */
 #auth-button {
     padding: 8px 15px; /* 内側の余白 */
@@ -208,7 +172,6 @@ input[type="number"]::-webkit-inner-spin-button {
     color: white; /* 文字色 */
     border: none; /* ボーダーなし */
     border-radius: 5px; /* 角を丸く */
-    cursor: pointer; /* カーソルをポインターに */
     font-size: 16px; /* フォントサイズ */
     margin-bottom: 15px; /* 下側の余白 */
 }
@@ -226,7 +189,6 @@ input[type="number"]::-webkit-inner-spin-button {
     text-shadow: 1px 1px 0px gray; /* 影を追加 */
     display: block; /* ブロックレベル要素として縦並びにする */
     text-align: center; /* 中央揃えにする */
-    margin-bottom: 10px; /* 余白をなくす */
 }
 /* 数値表示のスタイル */
 .stat-value {
@@ -270,20 +232,16 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* 各列の最小・最大幅を設定 */
-.grade-width{ min-width: 92px; max-width: 92px;}
 .name-width { min-width: 87px; max-width: 117px;}
 .memo-width { min-width: 277px; max-width: 277px;}
-.state-width{ min-width: 57px; max-width: 57px;}
+.state-width{ min-width: 67px; max-width: 67px;}
 .button-width { min-width: 90px; max-width: 90px;}
 .position-width { min-width: 72px; max-width: 90px; }
 .pitbutton-width { min-width: 80px; max-width: 80px; }
 
-/* 守備位置選択ドロップダウンのスタイル */
-.position-inputs select {
-    margin-bottom: 2px; /* 下側の余白 */
-    padding: 3px; /* 内側の余白 */
-    font-size: 10px; /* フォントサイズ */
-    box-sizing: border-box; /* パディングとボーダーを幅に含める */
+.position-cell{
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 /* 守備位置表示のスタイル */
@@ -311,21 +269,12 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* 守備位置編集用のコンテナスタイル */
-.position-edit {
-    width: 80px;
+.position-cell select {
     display: flex; /* Flexboxを使用 */
     flex-direction: column; /* 縦方向に配置 */
     gap: 2px; /* 要素間の間隔 */
     margin-left: 10px; /* 左側の余白 */
     margin-right: 10px; /* 右側の余白 */
-}
-
-/* 守備位置選択入力のスタイル */
-.input-position {
-    padding: 3px; /* 内側の余白 */
-    font-size: 15px; /* フォントサイズ */
-    border: 1px solid #ccc; /* ボーダー */
-    border-radius: 3px; /* 角を丸く */
 }
 
 /* メイン守備位置の背景色 */
@@ -342,12 +291,6 @@ input[type="number"]::-webkit-inner-spin-button {
 /* 詳細ボタンのスタイル（任意ですが、ボタンらしく見せるために推奨） */
 .detail-btn {
     background-color: #e76767; /* 青い背景 */
-    font-weight: bold; /* 太字 */
-    color: white; /* 文字色を白に */
-    border: none; /* 枠線なし */
-    padding: 5px 10px; /* 内側の余白 */
-    border-radius: 4px; /* 角を少し丸く */
-    font-size: 14px; /* 文字の大きさ */
 }
 
 .pitcher-container {
@@ -365,17 +308,8 @@ input[type="number"]::-webkit-inner-spin-button {
     color: rgb(0, 0, 0);
     background-color: #9bff74ab !important; /* 薄い黄色 */
 }
-#rgstInput-name{
-    width: 93px;
-    display: flex; /* Flexboxを使用 */
-    flex-direction: column; /* 縦方向に配置 */
-    margin-left:10px; /* 左側の余白 */
-}
 
 .input-seikaku {
-    font-size: 15px;
-    text-align: center; /* 中央揃え */
-    width: 100px; /* 幅を設定 */
     margin-left: 10px; /* 左側の余白 */
     margin-right: 10px; /* 右側の余白 */
     margin-bottom: 10px; /* 下側の余白 */

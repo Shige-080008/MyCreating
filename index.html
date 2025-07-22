@@ -36,15 +36,11 @@
             </thead>
             <tbody>
                 <tr id="regist-row">
-                    <td>
-                        <div class="grade-cell">
-                            <p class="data-grade">登録</p>
-                            <div class="input-set">
-                                <input type="number" id="rgstInput-year" required min="1932" max="2500" placeholder="入学年">
-                            </div>
-                        </div>
+                    <td class="grade-cell">
+                        <p class="data-grade">登録</p>
+                        <input type="number" id="rgstInput-year" required min="1932" max="2500" placeholder="入学年">
                     </td>
-                    <td>
+                    <td class="name-cell">
                         <input type="text" id="rgstInput-name" required minlength="1" maxlength="10" placeholder="名前を入力">
                         <select id="rgstInput-seikaku" class="rgstInput-seikaku">
                             <option value="性格">性格</option>
@@ -58,8 +54,8 @@
                             <option value="熱血漢">熱血漢</option>
                         </select>
                     </td>
-                    <td class="position-inputs">
-                        <select id="rgstInput-posi1" class="rgstInput-posi" placelolder="メイン">
+                    <td class="position-cell">
+                        <select id="rgstInput-posi1" placelolder="メイン">
                             <option value="">メイン</option>
                             <option value="投手">投手</option>
                             <option value="捕手">捕手</option>
@@ -69,7 +65,7 @@
                             <option value="遊撃手">遊撃手</option>
                             <option value="外野手">外野手</option>
                         </select>
-                        <select id="rgstInput-posi2" class="rgstInput-posi">
+                        <select id="rgstInput-posi2">
                             <option value="">サブ１</option>
                             <option value="投手">投手</option>
                             <option value="捕手">捕手</option>
@@ -79,7 +75,7 @@
                             <option value="遊撃手">遊撃手</option>
                             <option value="外野手">外野手</option>
                         </select>
-                        <select id="rgstInput-posi3" class="rgstInput-posi">
+                        <select id="rgstInput-posi3">
                             <option value="">サブ２</option>
                             <option value="投手">投手</option>
                             <option value="捕手">捕手</option>
@@ -90,7 +86,7 @@
                             <option value="外野手">外野手</option>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="throwing"></span>
                         <select id="rgstInput-throw" required>
                             <option value="">送</option>
@@ -104,7 +100,7 @@
                             <option value="0">G</option>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="dandou"></span>
                         <select id="rgstInput-dandou" required>
                             <option value="">弾</option>
@@ -115,7 +111,7 @@
                             </script>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="meet"></span>
                         <select id="rgstInput-meet" required>
                             <option value="">ミ</option>
@@ -126,7 +122,7 @@
                             </script>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="power"></span>
                         <select id="rgstInput-power" required>
                             <option value="">パ</option>
@@ -137,7 +133,7 @@
                             </script>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="speed"></span>
                         <select id="rgstInput-speed" required>
                             <option value="">走</option>
@@ -148,7 +144,7 @@
                             </script>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="armStrength"></span>
                         <select id="rgstInput-arm" required>
                             <option value="">肩</option>
@@ -159,7 +155,7 @@
                             </script>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="defense"></span>
                         <select id="rgstInput-defense" required>
                             <option value="">守</option>
@@ -170,7 +166,7 @@
                             </script>
                         </select>
                     </td>
-                    <td>
+                    <td class="data-cell">
                         <span class="grade-display" data-stat-type="catching"></span>
                         <select id="rgstInput-catch" required>
                             <option value="">捕</option>
