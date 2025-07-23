@@ -14,14 +14,14 @@ tbody tr{
     height: auto;
     border-radius: 20px;
     text-align: center; /* 中央揃え */
-    padding: 3px; /* 内側の余白 */
+    padding: 2px; /* 内側の余白 */
     border: 1px solid #ccc;
 }
 
 .list-player button {
     width: 65px; /* ボタンの幅を100%に */
     font-weight: bold; /* 太字 */
-    padding: 5px 10px; /* 内側の余白 */
+    padding: 3px 10px; /* 内側の余白 */
     font-size: 15px; /* フォントサイズ */
     border-radius: 20px; /* 角を丸く */
     border: none; /* ボーダーなし */
@@ -46,7 +46,7 @@ tbody td { border-left: 0.5px dotted #b1b1b1; }
 .data-grade, .data-year, #rgstInput-year {
     text-align: center;
     font-weight: bold;
-    margin: 0px 10px;
+    margin: 0px;
 }
 .data-grade { font-size: 25px; } /* 「〇年生」のフォントサイズだけ大きく */
 
@@ -68,25 +68,12 @@ tbody td { border-left: 0.5px dotted #b1b1b1; }
     margin-bottom: 5px;
 }
 
-
-.edit-textarea{
-    width: 350px;
-}
-
 /* メモ入力欄のスタイル */
 .list-player textarea {
-    height: 70px; /* 高さを調整 */
+    width: 350px;
     height: 80px; /* 高さを調整 */
     font-size: 15px; /* フォントサイズ */
     border-style: none; /* ボーダーなし */
-    text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
-}
-#rgstInput-memo{
-    width: 350px; /* 幅を100%に */
-    height: 80px; /* 高さを調整 */
-    font-size: 15px; /* フォントサイズ */
-    border-style: none; /* ボーダーなし */
-    /* 文字列に下線を引く */
     text-decoration: underline dotted rgb(192, 192, 192); /* 下線を引く */
 }
 /* 未ログイン時のメモ表示スタイル */
@@ -106,7 +93,7 @@ tbody td { border-left: 0.5px dotted #b1b1b1; }
 .name-text {
     font-size: 23px; /* 選手名のフォントサイズ */
     height: 20px; /* 高さを調整 */
-    margin-top: 5px;
+    margin-top: 0px;
     line-height: 50px; /* 行の高さを調整 */
 }
 
@@ -185,7 +172,7 @@ tbody td { border-left: 0.5px dotted #b1b1b1; }
 /* アルファベットランク表示のスタイル */
 .stat-grade {
     font-weight: bold; /* 太字 */
-    font-size: 30px; /* 文字サイズを大きく */
+    font-size: 35px; /* 文字サイズを大きく */
     text-shadow: 1px 1px 0px gray; /* 影を追加 */
     display: block; /* ブロックレベル要素として縦並びにする */
     text-align: center; /* 中央揃えにする */
