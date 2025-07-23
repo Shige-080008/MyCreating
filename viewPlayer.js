@@ -557,6 +557,9 @@ export function updatePlayerListUI(playersData = []) {
     playerListBody = elements.playerListBody;
     const registRow = elements.registRow; // ui.jsから取得
 
+    // 現在のスクロール位置を保存
+    const currentScrollTop = document.documentElement.scrollTop || document.body.scrollTop; //
+
     Array.from(playerListBody.children).forEach(child => {
         if (child.id !== 'regist-row') {
             child.remove();
@@ -576,6 +579,7 @@ export function updatePlayerListUI(playersData = []) {
         noPlayerRow.classList.add('no-player');
         playerListBody.appendChild(noPlayerRow);
         playerListBody.appendChild(registRow);
+        // データがない場合はスクロール位置を戻す必要がないためここで終了
         return;
     }
 
@@ -623,4 +627,8 @@ export function updatePlayerListUI(playersData = []) {
 
     rowsToAppend.forEach(row => playerListBody.appendChild(row));
     playerListBody.appendChild(registRow);
+
+    // UI更新後に元のスクロール位置に戻す
+    document.documentElement.scrollTop = currentScrollTop; //
+    document.body.scrollTop = currentScrollTop; //
 }
